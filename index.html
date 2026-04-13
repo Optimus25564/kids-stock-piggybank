@@ -660,6 +660,181 @@
   }
   .deposit-option .arrow { font-size: 18px; color: #b0b0b0; }
 
+  /* add new jar page */
+  .addjar-modal {
+    background: linear-gradient(180deg, #fff9e6 0%, #ffeaa7 100%);
+    border-radius: 28px;
+    width: 96%;
+    max-width: 400px;
+    max-height: 92vh;
+    overflow: hidden;
+    animation: pop 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+  .addjar-header {
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    border-radius: 28px 28px 0 0;
+    border-bottom: 1px solid #f0f3f5;
+  }
+  .addjar-header .back {
+    width: 32px; height: 32px;
+    background: #f0f3f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .addjar-header .title { font-size: 17px; font-weight: 800; }
+  .addjar-header .subtitle { font-size: 11px; color: #95a5a6; margin-top: 1px; }
+  .addjar-body {
+    padding: 18px 16px 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .addjar-tip {
+    background: linear-gradient(135deg, #ffe4ec, #ffd6e0);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 11px;
+    color: #2d3436;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .addjar-tip .at-icon { font-size: 14px; flex-shrink: 0; }
+  .company-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .company-card {
+    background: white;
+    border-radius: 16px;
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .company-card:hover { transform: translateY(-3px); border-color: #fdcb6e; box-shadow: 0 8px 20px rgba(253,203,110,0.25); }
+  .company-card:active { transform: scale(0.97); }
+  .company-card .c-emoji {
+    font-size: 38px;
+    line-height: 1;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .company-card .c-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #2d3436;
+  }
+  .company-card .c-tag {
+    font-size: 9px;
+    color: #95a5a6;
+    margin-top: 2px;
+  }
+  .company-card .c-reason {
+    font-size: 10px;
+    color: #636e72;
+    line-height: 1.4;
+    margin-top: 6px;
+    background: #fff9e6;
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-style: italic;
+  }
+
+  /* confirm new jar */
+  .confirm-jar-modal {
+    background: white;
+    border-radius: 28px;
+    padding: 26px 22px 22px;
+    width: 92%;
+    max-width: 360px;
+    text-align: center;
+    animation: pop 0.4s;
+  }
+  .confirm-jar-modal .cj-emoji {
+    font-size: 78px;
+    line-height: 1;
+    display: inline-block;
+    animation: bounceIn 0.6s;
+    margin-bottom: 6px;
+  }
+  .confirm-jar-modal h2 { font-size: 22px; margin-bottom: 4px; }
+  .confirm-jar-modal .cj-sub { font-size: 12px; color: #95a5a6; margin-bottom: 16px; }
+  .confirm-jar-modal .cj-reason {
+    background: #fff9e6;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #2d3436;
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .cj-amount-area {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .cj-amount-area .cj-label { font-size: 11px; color: #95a5a6; margin-bottom: 6px; }
+  .cj-amount-area .cj-amount {
+    font-size: 30px;
+    font-weight: 800;
+    color: #2d3436;
+    letter-spacing: -0.5px;
+  }
+  .cj-amount-area .cj-amount .currency { font-size: 14px; color: #95a5a6; margin-right: 4px; }
+  .cj-quick {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .cj-quick .qb {
+    background: white;
+    border: 1.5px solid #f0f3f5;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #636e72;
+  }
+  .cj-quick .qb.active { background: #fdcb6e; color: white; border-color: #fdcb6e; }
+
+  /* jar added toast */
+  .jar-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 24px 32px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    z-index: 100;
+    animation: pop 0.4s;
+  }
+  .jar-toast .jt-emoji { font-size: 56px; line-height: 1; display: block; margin-bottom: 8px; animation: bounceIn 0.6s; }
+  .jar-toast .jt-title { font-size: 16px; font-weight: 800; }
+  .jar-toast .jt-sub { font-size: 11px; color: #95a5a6; margin-top: 4px; }
+
   /* invest center sub-page */
   .invest-page {
     background: linear-gradient(180deg, #fff7e6 0%, #ffeaa7 100%);
@@ -2185,7 +2360,6 @@
       欢迎回来
       <strong id="header-title">小宇的股票储蓄罐 🏠</strong>
     </div>
-    <div class="coin-badge" onclick="openAlbum()">📖 卡册 5/12</div>
   </div>
 
   <div class="total-card">
@@ -2237,7 +2411,7 @@
   </div>
 
   <div class="shelf">
-    <div class="jars">
+    <div class="jars" id="jars-grid">
       <div class="jar up-glow" onclick="openJar('apple')">
         <span class="sparkle">✨</span>
         <span class="emoji">🍎</span>
@@ -2773,6 +2947,46 @@
   </div>
 </div>
 
+<div class="modal-bg" id="addjar" onclick="closeAddJar(event)">
+  <div class="addjar-modal" onclick="event.stopPropagation()">
+    <div class="addjar-header">
+      <div class="back" onclick="closeAddJar()">‹</div>
+      <div>
+        <div class="title">🆕 开一个新罐子</div>
+        <div class="subtitle">挑一家小宇喜欢的公司</div>
+      </div>
+    </div>
+    <div class="addjar-body">
+      <div class="addjar-tip">
+        <span class="at-icon">💡</span>
+        <span>选一家孩子日常生活里熟悉的公司,他会更愿意持有 — 投资从"我懂的东西"开始,是最好的启蒙</span>
+      </div>
+      <div class="company-grid" id="company-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="confirm-jar" onclick="closeConfirmJar(event)">
+  <div class="confirm-jar-modal" onclick="event.stopPropagation()">
+    <span class="cj-emoji" id="cj-emoji">🪟</span>
+    <h2 id="cj-name">微软</h2>
+    <div class="cj-sub" id="cj-tag">Microsoft · MSFT</div>
+    <div class="cj-reason" id="cj-reason">"你玩的电脑游戏几乎都用 Windows 系统"</div>
+    <div class="cj-amount-area">
+      <div class="cj-label">本次开罐金额</div>
+      <div class="cj-amount"><span class="currency">HK$</span>200</div>
+      <div class="cj-quick">
+        <div class="qb">100</div>
+        <div class="qb active">200</div>
+        <div class="qb">500</div>
+        <div class="qb">1,000</div>
+      </div>
+    </div>
+    <button class="confirm-cta" onclick="finalizeNewJar()">🎉 确认开罐 HK$ 200</button>
+    <div class="ceremony-secondary" onclick="closeConfirmJar()">取消</div>
+  </div>
+</div>
+
 <div class="modal-bg" id="invest" onclick="closeInvest(event)">
   <div class="invest-page" onclick="event.stopPropagation()">
     <div class="invest-page-header">
@@ -2820,11 +3034,11 @@
         <div class="arrow">›</div>
       </div>
 
-      <div class="next-action">
+      <div class="next-action" onclick="openAddJar()">
         <div class="ne-icon">🆕</div>
         <div class="ne-info">
           <div class="ne-name">和小宇一起开个新罐子</div>
-          <div class="ne-desc">发起对话,让孩子先讲讲想买什么</div>
+          <div class="ne-desc">从精选公司里挑一家,陪孩子一起决定</div>
         </div>
         <div class="arrow">›</div>
       </div>
@@ -2868,81 +3082,89 @@
   </div>
 </div>
 
-<div class="modal-bg" id="album" onclick="closeAlbum(event)">
-  <div class="album-modal" onclick="event.stopPropagation()">
-    <div class="album-header">
-      <h2>📖 我的公司卡册</h2>
-      <div class="sub">已收集 5 / 12 张 · 读完小故事就能解锁</div>
-    </div>
-    <div class="album-grid" id="album-grid"></div>
-    <div class="album-tip">
-      💡 每张卡有 3 页小故事。读完一页就能翻开下一页,集齐就能拿到这家公司的"金卡"!
-    </div>
-    <button class="close" onclick="closeAlbum()" style="display:block;margin:0 auto;">关上卡册</button>
-  </div>
-</div>
-
-<div class="modal-bg" id="card-detail-modal" onclick="closeCardDetail(event)">
-  <div class="card-detail" onclick="event.stopPropagation()">
-    <div class="big" id="cd-emoji">🍎</div>
-    <h3 id="cd-name">苹果公司</h3>
-    <div class="tag" id="cd-tag">已读 2 / 3 页</div>
-    <div class="progress-bar"><div class="fill" id="cd-fill" style="width:66%"></div></div>
-    <div class="pages" id="cd-pages"></div>
-    <button class="close" onclick="closeCardDetail()">知道啦 ✨</button>
-  </div>
-</div>
 
 <script>
-const cardData = [
-  { key:'apple', emoji:'🍎', name:'苹果', unlocked:true, read:2, total:3, isNew:false,
-    pages:[
-      {title:'谁创造了苹果?', body:'两个叫乔布斯和沃兹的年轻人在车库里做出了第一台苹果电脑 🚗'},
-      {title:'苹果在做什么?', body:'iPhone、iPad、Mac…全世界 20 亿人在用它的产品'},
-      {title:'为什么叫苹果?', body:'因为乔布斯曾经在一个苹果园工作过,他觉得"苹果"听起来又好玩又简单'},
-    ]},
-  { key:'disney', emoji:'🏰', name:'迪士尼', unlocked:true, read:3, total:3, isNew:false,
-    pages:[
-      {title:'米奇是怎么来的?', body:'画家华特·迪士尼在火车上画出了米奇的样子 🐭'},
-      {title:'迪士尼有多大?', body:'乐园、电影、漫威、星球大战…都是它的!'},
-      {title:'金卡解锁 🏆', body:'你已经成为迪士尼的小专家啦!'},
-    ]},
-  { key:'nintendo', emoji:'🎮', name:'任天堂', unlocked:true, read:1, total:3, isNew:true,
-    pages:[
-      {title:'130 岁的玩具公司', body:'任天堂一开始是做扑克牌的,你信吗? 🃏'},
-      {title:'马力欧是谁画的?', body:'(还没解锁)'},
-      {title:'Switch 卖了多少台?', body:'(还没解锁)'},
-    ]},
-  { key:'tesla', emoji:'🚗', name:'特斯拉', unlocked:true, read:1, total:3, isNew:false,
-    pages:[
-      {title:'会自己开的车', body:'特斯拉的车不烧油,用电跑,还能自己看路!'},
-      {title:'(还没解锁)', body:''},
-      {title:'(还没解锁)', body:''},
-    ]},
-  { key:'mcd', emoji:'🍔', name:'麦当劳', unlocked:true, read:0, total:3, isNew:true,
-    pages:[
-      {title:'第一家在哪?', body:'(还没解锁 — 读一读就能翻开)'},
-      {title:'(还没解锁)', body:''},
-      {title:'(还没解锁)', body:''},
-    ]},
-  { key:'lego', emoji:'🧱', name:'乐高', unlocked:false },
-  { key:'pokemon', emoji:'⚡', name:'宝可梦', unlocked:false },
-  { key:'nike', emoji:'👟', name:'耐克', unlocked:false },
-  { key:'lvmh', emoji:'👜', name:'LV', unlocked:false },
-  { key:'msft', emoji:'🪟', name:'微软', unlocked:false },
-  { key:'spotify', emoji:'🎵', name:'Spotify', unlocked:false },
-  { key:'cocacola', emoji:'🥤', name:'可口可乐', unlocked:false },
+// available companies for new jars
+const availableCompanies = [
+  { key:'msft',     emoji:'🪟', name:'微软',     tag:'Microsoft · MSFT', reason:'"你玩的电脑游戏几乎都用 Windows"' },
+  { key:'nike',     emoji:'👟', name:'耐克',     tag:'Nike · NKE',       reason:'"勾子鞋的牌子,你的足球鞋就是它"' },
+  { key:'cocacola', emoji:'🥤', name:'可口可乐', tag:'Coca-Cola · KO',   reason:'"全世界最爱喝的汽水"' },
+  { key:'netflix',  emoji:'🎬', name:'Netflix', tag:'Netflix · NFLX',   reason:'"看动画片的地方"' },
+  { key:'spotify',  emoji:'🎵', name:'Spotify', tag:'Spotify · SPOT',   reason:'"听音乐的 App,你最爱的歌都在这"' },
+  { key:'starbucks',emoji:'☕', name:'星巴克',   tag:'Starbucks · SBUX', reason:'"爸爸每天买咖啡的地方"' },
 ];
+let selectedCompany = null;
+let selectedAmount = 200;
 
-function renderAlbum() {
-  const g = document.getElementById('album-grid');
-  g.innerHTML = cardData.map(c => {
-    if (!c.unlocked) {
-      return `<div class="card locked"><span class="lock-icon">🔒</span><div class="card-emoji">${c.emoji}</div><div class="card-name">???</div></div>`;
-    }
-    const newBadge = c.isNew ? '<span class="new-badge">NEW</span>' : '';
-    return `<div class="card unlocked" onclick="openCardDetail('${c.key}')">${newBadge}<div class="card-emoji">${c.emoji}</div><div class="card-name">${c.name}</div><div class="card-pages">${c.read}/${c.total} 页</div></div>`;
-  }).join('');
+function renderCompanyGrid() {
+  const g = document.getElementById('company-grid');
+  g.innerHTML = availableCompanies.map(c => `
+    <div class="company-card" onclick="pickCompany('${c.key}')">
+      <span class="c-emoji">${c.emoji}</span>
+      <div class="c-name">${c.name}</div>
+      <div class="c-tag">${c.tag}</div>
+      <div class="c-reason">${c.reason}</div>
+    </div>
+  `).join('');
+}
+function openAddJar() {
+  document.getElementById('invest').classList.remove('show');
+  renderCompanyGrid();
+  setTimeout(() => document.getElementById('addjar').classList.add('show'), 200);
+}
+function closeAddJar(e) {
+  if (e && e.target.id !== 'addjar') return;
+  document.getElementById('addjar').classList.remove('show');
+}
+function pickCompany(key) {
+  selectedCompany = availableCompanies.find(c => c.key === key);
+  document.getElementById('cj-emoji').textContent = selectedCompany.emoji;
+  document.getElementById('cj-name').textContent = selectedCompany.name;
+  document.getElementById('cj-tag').textContent = selectedCompany.tag;
+  document.getElementById('cj-reason').textContent = selectedCompany.reason;
+  document.getElementById('addjar').classList.remove('show');
+  setTimeout(() => document.getElementById('confirm-jar').classList.add('show'), 200);
+}
+function closeConfirmJar(e) {
+  if (e && e.target.id !== 'confirm-jar') return;
+  document.getElementById('confirm-jar').classList.remove('show');
+}
+function finalizeNewJar() {
+  openPwd('HK$ ' + selectedAmount, () => {
+    document.getElementById('confirm-jar').classList.remove('show');
+    addJarToShelf(selectedCompany);
+    showJarToast(selectedCompany);
+  });
+}
+function addJarToShelf(c) {
+  const grid = document.getElementById('jars-grid');
+  const empty = grid.querySelector('.empty-jar');
+  const newJar = document.createElement('div');
+  newJar.className = 'jar up-glow';
+  newJar.innerHTML = `
+    <span class="sparkle">✨</span>
+    <span class="emoji">${c.emoji}</span>
+    <div class="name">${c.name}</div>
+    <div class="value">HK$ 200</div>
+    <div class="chg up">▲ NEW</div>
+  `;
+  if (empty) grid.insertBefore(newJar, empty);
+  else grid.appendChild(newJar);
+  // remove this company from available pool
+  const i = availableCompanies.findIndex(x => x.key === c.key);
+  if (i >= 0) availableCompanies.splice(i, 1);
+}
+function showJarToast(c) {
+  const t = document.createElement('div');
+  t.className = 'jar-toast';
+  t.innerHTML = `
+    <span class="jt-emoji">${c.emoji}</span>
+    <div class="jt-title">${c.name}罐子开好啦!</div>
+    <div class="jt-sub">已经放到小宇的架子上 🏠</div>
+  `;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.transition = 'opacity 0.4s'; t.style.opacity = '0'; }, 1800);
+  setTimeout(() => t.remove(), 2300);
 }
 
 function confirmOnboard() {
@@ -3221,31 +3443,6 @@ function closeInvest(e) {
 function goToInvest() {
   document.getElementById('success').classList.remove('show');
   setTimeout(() => openInvest(), 200);
-}
-
-function openAlbum() {
-  renderAlbum();
-  document.getElementById('album').classList.add('show');
-}
-function closeAlbum(e) {
-  if (e && e.target.id !== 'album') return;
-  document.getElementById('album').classList.remove('show');
-}
-function openCardDetail(key) {
-  const c = cardData.find(x => x.key === key);
-  document.getElementById('cd-emoji').textContent = c.emoji;
-  document.getElementById('cd-name').textContent = c.name;
-  document.getElementById('cd-tag').textContent = `已读 ${c.read} / ${c.total} 页`;
-  document.getElementById('cd-fill').style.width = `${(c.read/c.total)*100}%`;
-  document.getElementById('cd-pages').innerHTML = c.pages.map((p,i) => {
-    const done = i < c.read;
-    return `<div class="page-item ${done?'':'locked'}"><span class="check">${done?'✅':'🔒'}</span><div><strong>${p.title}</strong><br>${done?p.body:'读完上一页就能翻开'}</div></div>`;
-  }).join('');
-  document.getElementById('card-detail-modal').classList.add('show');
-}
-function closeCardDetail(e) {
-  if (e && e.target.id !== 'card-detail-modal') return;
-  document.getElementById('card-detail-modal').classList.remove('show');
 }
 
 const jarData = {
