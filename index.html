@@ -704,6 +704,103 @@
   .trade-btn .tb-title { font-size: 12px; font-weight: 800; }
   .trade-btn .tb-sub { font-size: 10px; opacity: 0.8; margin-top: 1px; }
 
+  .trade-input-panel {
+    display: none;
+    background: #fff9e6;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    animation: pop 0.2s;
+  }
+  .trade-input-panel.show { display: block; }
+  .tip-title {
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 12px;
+    color: #2d3436;
+  }
+  .tip-amount-row {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .tip-currency {
+    font-size: 13px;
+    color: #95a5a6;
+    font-weight: 700;
+  }
+  .tip-amount-row input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 22px;
+    font-weight: 800;
+    color: #2d3436;
+    background: transparent;
+    text-align: right;
+    font-family: inherit;
+    width: 100%;
+  }
+  .tip-amount-row input::-webkit-outer-spin-button,
+  .tip-amount-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .tip-quick {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .tip-qb {
+    background: white;
+    border: 1.5px solid transparent;
+    padding: 8px 0;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #636e72;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tip-qb:hover { border-color: #fdcb6e; color: #ff6b6b; }
+  .tip-qb:active { transform: scale(0.95); }
+  .tip-error {
+    color: #e17055;
+    font-size: 11px;
+    text-align: center;
+    height: 14px;
+    margin-bottom: 6px;
+  }
+  .tip-buttons {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 8px;
+  }
+  .tip-cancel, .tip-confirm {
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .tip-cancel { background: #f0f3f5; color: #636e72; }
+  .tip-confirm {
+    background: linear-gradient(135deg, #ff6b6b, #ff9a9e);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255,107,107,0.3);
+  }
+  .tip-confirm.sell {
+    background: linear-gradient(135deg, #95a5a6, #b0bec5);
+    box-shadow: 0 4px 12px rgba(149,165,166,0.3);
+  }
+  .tip-cancel:active, .tip-confirm:active { transform: scale(0.97); }
+
   /* add new jar page */
   .addjar-modal {
     background: linear-gradient(180deg, #fff9e6 0%, #ffeaa7 100%);
@@ -2745,21 +2842,39 @@
       📖 <strong>你知道吗?</strong><br>
       苹果公司每卖出 10 台 iPhone,你的罐子就会多 0.002 元。全世界有超过 20 亿人在用它的产品,包括你爸爸妈妈的手机!
     </div>
-    <div class="trade-actions">
-      <button class="trade-btn buy" onclick="tradeJar('buy')">
+    <div class="trade-actions" id="trade-actions">
+      <button class="trade-btn buy" onclick="enterTradeMode('buy')">
         <span class="tb-icon">＋</span>
         <div class="tb-text">
-          <div class="tb-title">加点钱进去</div>
-          <div class="tb-sub">买入 HK$ 100</div>
+          <div class="tb-title">追投</div>
+          <div class="tb-sub">再加点钱进罐子</div>
         </div>
       </button>
-      <button class="trade-btn sell" onclick="tradeJar('sell')">
+      <button class="trade-btn sell" onclick="enterTradeMode('sell')">
         <span class="tb-icon">－</span>
         <div class="tb-text">
-          <div class="tb-title">拿出来一点</div>
-          <div class="tb-sub">卖出 HK$ 100</div>
+          <div class="tb-title">卖出</div>
+          <div class="tb-sub">从罐子里拿出来</div>
         </div>
       </button>
+    </div>
+    <div class="trade-input-panel" id="trade-input-panel">
+      <div class="tip-title" id="tip-title">追投到 苹果罐子</div>
+      <div class="tip-amount-row">
+        <span class="tip-currency">HK$</span>
+        <input id="tip-amount" type="number" placeholder="0" inputmode="numeric">
+      </div>
+      <div class="tip-quick">
+        <div class="tip-qb" onclick="setTipAmount(100)">100</div>
+        <div class="tip-qb" onclick="setTipAmount(200)">200</div>
+        <div class="tip-qb" onclick="setTipAmount(500)">500</div>
+        <div class="tip-qb" onclick="setTipAmount(1000)">1000</div>
+      </div>
+      <div class="tip-error" id="tip-error"></div>
+      <div class="tip-buttons">
+        <button class="tip-cancel" onclick="exitTradeMode()">取消</button>
+        <button class="tip-confirm" id="tip-confirm" onclick="submitTrade()">确认追投</button>
+      </div>
     </div>
     <button class="close" onclick="closeJar()" style="background:#f0f3f5;color:#636e72;">关闭</button>
   </div>
@@ -3252,38 +3367,12 @@
         </div>
       </div>
 
-      <div class="pending-banner">
-        <div class="pb-avatar">🧒</div>
-        <div class="pb-text">
-          小宇有 <strong>2 个待审批的提议</strong> 在等这笔钱:<br>
-          🎮 想买任天堂 HK$200 · 🍔 想加仓麦当劳 HK$150
-        </div>
-      </div>
-
       <div class="next-title">这笔钱怎么用?</div>
 
-      <div class="next-action featured">
-        <div class="ne-icon">✅</div>
-        <div class="ne-info">
-          <div class="ne-name">批准小宇的提议 <span class="ne-tag">推荐</span></div>
-          <div class="ne-desc">用 HK$350 完成 2 个提议,剩 HK$150 留作现金</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="next-action">
-        <div class="ne-icon">📊</div>
-        <div class="ne-info">
-          <div class="ne-name">按现有比例自动加仓</div>
-          <div class="ne-desc">智能分配到 5 只现有罐子,保持组合结构</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="next-action" onclick="openAddJar()">
+      <div class="next-action featured" onclick="openAddJar()">
         <div class="ne-icon">🆕</div>
         <div class="ne-info">
-          <div class="ne-name">和小宇一起开个新罐子</div>
+          <div class="ne-name">和小宇一起开个新罐子 <span class="ne-tag">推荐</span></div>
           <div class="ne-desc">从精选公司里挑一家,陪孩子一起决定</div>
         </div>
         <div class="arrow">›</div>
@@ -3782,19 +3871,53 @@ function renderJarModal() {
 function openJar(key) {
   currentJarKey = key;
   renderJarModal();
+  exitTradeMode();
   document.getElementById('modal').classList.add('show');
 }
 function closeJar(e) {
   document.getElementById('modal').classList.remove('show');
 }
-function tradeJar(action) {
+let tradeMode = null;
+
+function enterTradeMode(action) {
+  tradeMode = action;
+  const d = jarData[currentJarKey];
+  document.getElementById('trade-actions').style.display = 'none';
+  document.getElementById('trade-input-panel').classList.add('show');
+  document.getElementById('tip-amount').value = '';
+  document.getElementById('tip-error').textContent = '';
+  document.getElementById('tip-title').textContent =
+    (action === 'buy' ? '追投到 ' : '卖出 ') + d.name;
+  const btn = document.getElementById('tip-confirm');
+  btn.textContent = action === 'buy' ? '确认追投' : '确认卖出';
+  btn.classList.toggle('sell', action === 'sell');
+  setTimeout(() => document.getElementById('tip-amount').focus(), 50);
+}
+function exitTradeMode() {
+  tradeMode = null;
+  document.getElementById('trade-actions').style.display = '';
+  document.getElementById('trade-input-panel').classList.remove('show');
+}
+function setTipAmount(n) {
+  document.getElementById('tip-amount').value = n;
+  document.getElementById('tip-error').textContent = '';
+}
+function submitTrade() {
   const d = jarData[currentJarKey];
   if (!d) return;
-  const amount = 100;
-  if (action === 'sell' && d.value < amount) {
-    alert('罐子里的钱不够,试试小一点的金额');
+  const raw = document.getElementById('tip-amount').value.trim();
+  const amount = parseFloat(raw);
+  const err = document.getElementById('tip-error');
+  if (!raw || isNaN(amount) || amount <= 0) {
+    err.textContent = '请输入金额';
     return;
   }
+  if (tradeMode === 'sell' && amount > d.value) {
+    err.textContent = '罐子里只有 ' + fmtMoney(d.value) + ',不够卖';
+    return;
+  }
+  err.textContent = '';
+  const action = tradeMode;
   openPwd('HK$ ' + amount, () => {
     if (action === 'buy') {
       d.value += amount;
@@ -3804,15 +3927,14 @@ function tradeJar(action) {
       d.cost = Math.max(0, d.cost - amount);
     }
     renderJarModal();
-    // update shelf jar value display
     const shelfJar = document.querySelector(`.jar[data-key="${currentJarKey}"] .value`);
     if (shelfJar) shelfJar.textContent = 'HK$ ' + Math.round(d.value);
-    // toast
+    exitTradeMode();
     const t = document.createElement('div');
     t.className = 'jar-toast';
     t.innerHTML = `
       <span class="jt-emoji">${action==='buy'?'💰':'💸'}</span>
-      <div class="jt-title">${action==='buy'?'已加入':'已卖出'} HK$ ${amount}</div>
+      <div class="jt-title">${action==='buy'?'已追投':'已卖出'} HK$ ${amount}</div>
       <div class="jt-sub">${d.name} 现在 ${fmtMoney(d.value)}</div>
     `;
     document.body.appendChild(t);
