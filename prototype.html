@@ -957,6 +957,25 @@
     color: #636e72;
   }
   .cj-quick .qb.active { background: #fdcb6e; color: white; border-color: #fdcb6e; }
+  .cj-quick .qb.disabled {
+    background: #f0f3f5;
+    color: #c0c0c0;
+    border-color: #f0f3f5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+  .cj-cash-note {
+    font-size: 11px;
+    color: #95a5a6;
+    text-align: center;
+    margin-top: 10px;
+  }
+  .cj-cash-note.warn { color: #e17055; font-weight: 700; }
+  .confirm-cta:disabled {
+    background: #d0d4d8;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
 
   /* jar added toast */
   .jar-toast {
@@ -3329,15 +3348,11 @@
     <div class="cj-reason" id="cj-reason">"你玩的电脑游戏几乎都用 Windows 系统"</div>
     <div class="cj-amount-area">
       <div class="cj-label">本次开罐金额</div>
-      <div class="cj-amount"><span class="currency">HK$</span>200</div>
-      <div class="cj-quick">
-        <div class="qb">100</div>
-        <div class="qb active">200</div>
-        <div class="qb">500</div>
-        <div class="qb">1,000</div>
-      </div>
+      <div class="cj-amount"><span class="currency">HK$</span><span id="cj-amt">200</span></div>
+      <div class="cj-quick" id="cj-quick"></div>
+      <div class="cj-cash-note" id="cj-cash-note">零花钱余额 HK$ 500</div>
     </div>
-    <button class="confirm-cta" onclick="finalizeNewJar()">🎉 确认开罐 HK$ 200</button>
+    <button class="confirm-cta" id="cj-cta" onclick="finalizeNewJar()">🎉 确认开罐 HK$ 200</button>
     <div class="ceremony-secondary" onclick="closeConfirmJar()">取消</div>
   </div>
 </div>
@@ -3480,14 +3495,51 @@ function closeAddJar(e) {
   if (e && e.target.id !== 'addjar') return;
   document.getElementById('addjar').classList.remove('show');
 }
+const CJ_AMOUNTS = [100, 200, 500, 1000];
 function pickCompany(key) {
   selectedCompany = availableCompanies.find(c => c.key === key);
   document.getElementById('cj-emoji').textContent = selectedCompany.emoji;
   document.getElementById('cj-name').textContent = selectedCompany.name;
   document.getElementById('cj-tag').textContent = selectedCompany.tag;
   document.getElementById('cj-reason').textContent = selectedCompany.reason;
+  // pick a default amount that fits within cash
+  const fits = CJ_AMOUNTS.filter(a => a <= cashBalance);
+  selectedAmount = fits.length ? (fits.includes(200) ? 200 : fits[fits.length-1]) : CJ_AMOUNTS[0];
+  renderCjQuick();
   document.getElementById('addjar').classList.remove('show');
   setTimeout(() => document.getElementById('confirm-jar').classList.add('show'), 200);
+}
+function renderCjQuick() {
+  document.getElementById('cj-quick').innerHTML = CJ_AMOUNTS.map(a => {
+    const disabled = a > cashBalance;
+    const cls = disabled ? 'qb disabled' : (a === selectedAmount ? 'qb active' : 'qb');
+    const onclick = disabled ? '' : `onclick="setNewJarAmount(${a})"`;
+    return `<div class="${cls}" ${onclick}>${a.toLocaleString('en-US')}</div>`;
+  }).join('');
+  document.getElementById('cj-amt').textContent = selectedAmount.toLocaleString('en-US');
+  const cta = document.getElementById('cj-cta');
+  const note = document.getElementById('cj-cash-note');
+  if (cashBalance < CJ_AMOUNTS[0]) {
+    cta.disabled = true;
+    cta.textContent = '零花钱不够开罐';
+    note.textContent = '零花钱只剩 ' + fmtMoney2(cashBalance) + ',先去入金吧';
+    note.classList.add('warn');
+  } else if (selectedAmount > cashBalance) {
+    cta.disabled = true;
+    cta.textContent = '余额不足';
+    note.textContent = '零花钱只剩 ' + fmtMoney2(cashBalance);
+    note.classList.add('warn');
+  } else {
+    cta.disabled = false;
+    cta.textContent = '🎉 确认开罐 HK$ ' + selectedAmount.toLocaleString('en-US');
+    note.textContent = '零花钱余额 ' + fmtMoney2(cashBalance);
+    note.classList.remove('warn');
+  }
+}
+function setNewJarAmount(a) {
+  if (a > cashBalance) return;
+  selectedAmount = a;
+  renderCjQuick();
 }
 function closeConfirmJar(e) {
   if (e && e.target.id !== 'confirm-jar') return;
