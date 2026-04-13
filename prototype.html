@@ -1168,6 +1168,28 @@
     color: white;
     border-color: #fdcb6e;
   }
+  .auto-quick {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .auto-quick .aq-btn {
+    background: white;
+    border: 1px solid #d4f4dd;
+    padding: 3px 9px;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #00b894;
+    cursor: pointer;
+  }
+  .auto-quick .aq-btn.active {
+    background: #00b894;
+    color: white;
+    border-color: #00b894;
+  }
+  .auto-quick .aq-btn:active { transform: scale(0.95); }
   .info-row {
     display: flex;
     justify-content: space-between;
@@ -3205,14 +3227,8 @@
 
       <div class="amount-input-area">
         <div class="input-label">本次调拨金额</div>
-        <div class="amount-display"><span class="currency">HK$</span>500</div>
-        <div class="quick-amounts">
-          <div class="quick-btn">100</div>
-          <div class="quick-btn">200</div>
-          <div class="quick-btn active">500</div>
-          <div class="quick-btn">1,000</div>
-          <div class="quick-btn">2,000</div>
-        </div>
+        <div class="amount-display"><span class="currency">HK$</span><span id="tr-amt">500</span></div>
+        <div class="quick-amounts" id="tr-quick"></div>
       </div>
 
       <div class="info-row">
@@ -3222,19 +3238,21 @@
         <span>手续费</span><span class="v green">免费</span>
       </div>
       <div class="info-row">
-        <span>调拨后我的牛牛号余额</span><span class="v">HK$ 24,080</span>
+        <span>调拨后我的牛牛号余额</span><span class="v" id="tr-after-source">HK$ 24,080</span>
       </div>
       <div class="info-row">
-        <span>调拨后小宇的零花钱</span><span class="v">HK$ 1,000</span>
+        <span>调拨后小宇的零花钱</span><span class="v" id="tr-after-dest">HK$ 1,000</span>
       </div>
 
       <div class="auto-toggle">
         <span class="at-icon">🔄</span>
-        <div class="at-text">设为<strong>每月 1 号自动调拨</strong> HK$ 500<br>培养孩子的定投习惯</div>
+        <div class="at-text">设为<strong>每月 1 号自动调拨</strong> HK$ <span id="tr-auto-amt">500</span><br>
+          <div class="auto-quick" id="tr-auto-quick"></div>
+        </div>
         <div class="switch-mini"></div>
       </div>
 
-      <button class="confirm-cta" onclick="confirmTransfer('从牛牛号调拨')">确认调拨 HK$ 500</button>
+      <button class="confirm-cta" id="tr-cta" onclick="confirmTransfer('从牛牛号调拨')">确认调拨 HK$ 500</button>
       <div class="secure-note">🔒 联名账户内部调拨 · 受 SFC 监管保护</div>
     </div>
   </div>
@@ -3276,14 +3294,8 @@
 
       <div class="amount-input-area">
         <div class="input-label">本次入金金额</div>
-        <div class="amount-display"><span class="currency">HK$</span>500</div>
-        <div class="quick-amounts">
-          <div class="quick-btn">100</div>
-          <div class="quick-btn">200</div>
-          <div class="quick-btn active">500</div>
-          <div class="quick-btn">1,000</div>
-          <div class="quick-btn">2,000</div>
-        </div>
+        <div class="amount-display"><span class="currency">HK$</span><span id="oc-amt">500</span></div>
+        <div class="quick-amounts" id="oc-quick"></div>
       </div>
 
       <div class="info-row">
@@ -3298,11 +3310,13 @@
 
       <div class="auto-toggle">
         <span class="at-icon">📅</span>
-        <div class="at-text">开启<strong>每月自动定投</strong><br>每月 1 号自动从天星扣 HK$ 500</div>
+        <div class="at-text">开启<strong>每月自动定投</strong> HK$ <span id="oc-auto-amt">500</span><br>
+          <div class="auto-quick" id="oc-auto-quick"></div>
+        </div>
         <div class="switch-mini"></div>
       </div>
 
-      <button class="confirm-cta" onclick="confirmOneClick()">一键入金 HK$ 500</button>
+      <button class="confirm-cta" id="oc-cta" onclick="confirmOneClick()">一键入金 HK$ 500</button>
       <div class="secure-note">🔒 银行级加密 · 受 HKMA 监管保护</div>
     </div>
   </div>
@@ -3465,11 +3479,9 @@ function closeConfirmJar(e) {
   document.getElementById('confirm-jar').classList.remove('show');
 }
 function finalizeNewJar() {
-  openPwd('HK$ ' + selectedAmount, () => {
-    document.getElementById('confirm-jar').classList.remove('show');
-    addJarToShelf(selectedCompany);
-    showJarToast(selectedCompany);
-  });
+  document.getElementById('confirm-jar').classList.remove('show');
+  addJarToShelf(selectedCompany);
+  showJarToast(selectedCompany);
 }
 function addJarToShelf(c) {
   const grid = document.getElementById('jars-grid');
@@ -3739,8 +3751,61 @@ function completeDeposit(source) {
   document.getElementById('success-source').textContent = source;
   setTimeout(() => document.getElementById('success').classList.add('show'), 200);
 }
+const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000];
+const SOURCE_BAL = 24580;
+const CHILD_CASH = 500;
+let trAmount = 500;
+let trAutoAmount = 500;
+let ocAmount = 500;
+let ocAutoAmount = 500;
+
+function fmtNum(n) { return n.toLocaleString('en-US'); }
+
+function renderTrQuick() {
+  document.getElementById('tr-quick').innerHTML = QUICK_AMOUNTS.map(a =>
+    `<div class="quick-btn ${a===trAmount?'active':''}" onclick="setTrAmount(${a})">${fmtNum(a)}</div>`
+  ).join('');
+  document.getElementById('tr-auto-quick').innerHTML = QUICK_AMOUNTS.map(a =>
+    `<div class="aq-btn ${a===trAutoAmount?'active':''}" onclick="setTrAutoAmount(${a})">${fmtNum(a)}</div>`
+  ).join('');
+}
+function setTrAmount(a) {
+  trAmount = a;
+  document.getElementById('tr-amt').textContent = fmtNum(a);
+  document.getElementById('tr-after-source').textContent = 'HK$ ' + fmtNum(SOURCE_BAL - a);
+  document.getElementById('tr-after-dest').textContent = 'HK$ ' + fmtNum(CHILD_CASH + a);
+  document.getElementById('tr-cta').textContent = '确认调拨 HK$ ' + fmtNum(a);
+  renderTrQuick();
+}
+function setTrAutoAmount(a) {
+  trAutoAmount = a;
+  document.getElementById('tr-auto-amt').textContent = fmtNum(a);
+  renderTrQuick();
+}
+
+function renderOcQuick() {
+  document.getElementById('oc-quick').innerHTML = QUICK_AMOUNTS.map(a =>
+    `<div class="quick-btn ${a===ocAmount?'active':''}" onclick="setOcAmount(${a})">${fmtNum(a)}</div>`
+  ).join('');
+  document.getElementById('oc-auto-quick').innerHTML = QUICK_AMOUNTS.map(a =>
+    `<div class="aq-btn ${a===ocAutoAmount?'active':''}" onclick="setOcAutoAmount(${a})">${fmtNum(a)}</div>`
+  ).join('');
+}
+function setOcAmount(a) {
+  ocAmount = a;
+  document.getElementById('oc-amt').textContent = fmtNum(a);
+  document.getElementById('oc-cta').textContent = '一键入金 HK$ ' + fmtNum(a);
+  renderOcQuick();
+}
+function setOcAutoAmount(a) {
+  ocAutoAmount = a;
+  document.getElementById('oc-auto-amt').textContent = fmtNum(a);
+  renderOcQuick();
+}
+
 function openTransfer() {
   document.getElementById('deposit').classList.remove('show');
+  renderTrQuick();
   setTimeout(() => document.getElementById('transfer').classList.add('show'), 200);
 }
 function closeTransfer(e) {
@@ -3748,7 +3813,7 @@ function closeTransfer(e) {
   document.getElementById('transfer').classList.remove('show');
 }
 function confirmTransfer(source) {
-  openPwd('HK$ 500', () => {
+  openPwd('HK$ ' + fmtNum(trAmount), () => {
     document.getElementById('transfer').classList.remove('show');
     document.getElementById('success-source').textContent = source;
     setTimeout(() => document.getElementById('success').classList.add('show'), 250);
@@ -3815,6 +3880,7 @@ function openOneClick(bank) {
   document.getElementById('oc-bank-display').textContent = isTianxing ? '天星银行' : '汇丰银行';
   document.getElementById('oc-eta').textContent = isTianxing ? '即时到账 ⚡' : '约 1-2 小时';
   window.__ocBank = bank;
+  renderOcQuick();
   setTimeout(() => document.getElementById('oneclick').classList.add('show'), 200);
 }
 function closeOneClick(e) {
@@ -3822,7 +3888,7 @@ function closeOneClick(e) {
   document.getElementById('oneclick').classList.remove('show');
 }
 function confirmOneClick() {
-  openPwd('HK$ 500', () => {
+  openPwd('HK$ ' + fmtNum(ocAmount), () => {
     document.getElementById('oneclick').classList.remove('show');
     document.getElementById('success-source').textContent = window.__ocBank || '银行入金';
     setTimeout(() => document.getElementById('success').classList.add('show'), 250);
