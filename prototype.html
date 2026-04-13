@@ -1411,6 +1411,153 @@
   .wish.achieved .w-icon { background: linear-gradient(135deg, #d4f4dd, #b8e8c4); }
   .wish.achieved .w-percent { color: #00b894; font-size: 16px; }
 
+  /* add wish */
+  .addwish-modal {
+    background: linear-gradient(180deg, #fff5f7 0%, #ffe0ec 100%);
+    border-radius: 28px;
+    padding: 24px 22px 22px;
+    width: 92%;
+    max-width: 380px;
+    max-height: 92vh;
+    overflow-y: auto;
+    animation: pop 0.3s;
+  }
+  .addwish-modal h2 {
+    font-size: 19px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .addwish-modal .aw-sub {
+    font-size: 11px;
+    color: #95a5a6;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .aw-section-label {
+    font-size: 11px;
+    color: #636e72;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .emoji-picker {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    background: white;
+    padding: 10px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+  }
+  .emoji-pick {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: #fff5f7;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .emoji-pick:active { transform: scale(0.9); }
+  .emoji-pick.selected {
+    background: #ffd6e0;
+    border-color: #ff6b6b;
+    transform: scale(1.05);
+  }
+  .aw-field { margin-bottom: 12px; }
+  .aw-field input, .aw-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid white;
+    border-radius: 14px;
+    font-size: 14px;
+    background: white;
+    color: #2d3436;
+    outline: none;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .aw-field input:focus, .aw-field textarea:focus {
+    border-color: #ff6b6b;
+  }
+  .aw-field textarea {
+    resize: none;
+    min-height: 60px;
+    line-height: 1.5;
+  }
+  .aw-amount-row {
+    position: relative;
+  }
+  .aw-amount-row .currency-prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+    font-size: 13px;
+    font-weight: 600;
+    pointer-events: none;
+  }
+  .aw-amount-row input { padding-left: 38px; font-weight: 700; font-size: 16px; }
+  .aw-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 12px 14px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    cursor: pointer;
+  }
+  .aw-toggle .at-left { flex: 1; font-size: 12px; }
+  .aw-toggle .at-left strong { display: block; font-size: 13px; }
+  .aw-toggle .at-left .at-desc { color: #95a5a6; font-size: 10px; margin-top: 1px; }
+  .aw-toggle .at-switch {
+    width: 36px; height: 20px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .aw-toggle .at-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: left 0.2s;
+  }
+  .aw-toggle.on .at-switch { background: #00b894; }
+  .aw-toggle.on .at-switch::after { left: 18px; }
+  .aw-error {
+    color: #e17055;
+    font-size: 11px;
+    text-align: center;
+    height: 14px;
+    margin-bottom: 6px;
+    display: none;
+  }
+  .aw-error.show { display: block; }
+  .aw-confirm {
+    width: 100%;
+    background: linear-gradient(135deg, #ff6b6b, #ff9a9e);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255,107,107,0.3);
+  }
+  .aw-confirm:active { transform: scale(0.98); }
+
   /* trade password pad */
   .pwd-modal {
     background: white;
@@ -2605,6 +2752,44 @@
   </div>
 </div>
 
+<div class="modal-bg" id="addwish" onclick="closeAddWish(event)">
+  <div class="addwish-modal" onclick="event.stopPropagation()">
+    <h2>💖 加一个新心愿</h2>
+    <div class="aw-sub">让小宇说出他想要的东西</div>
+
+    <span class="aw-section-label">选一个图标</span>
+    <div class="emoji-picker" id="emoji-picker"></div>
+
+    <span class="aw-section-label">心愿是什么</span>
+    <div class="aw-field">
+      <input id="aw-name" type="text" placeholder="例如:Switch 2 / 山地车 / 去日本看樱花" autocomplete="off">
+    </div>
+
+    <span class="aw-section-label">需要多少钱</span>
+    <div class="aw-field aw-amount-row">
+      <span class="currency-prefix">HK$</span>
+      <input id="aw-amount" type="number" placeholder="3000" autocomplete="off">
+    </div>
+
+    <span class="aw-section-label">小宇说的话(可选)</span>
+    <div class="aw-field">
+      <textarea id="aw-note" placeholder='例如:"和爸爸一起玩马力欧"'></textarea>
+    </div>
+
+    <div class="aw-toggle" id="aw-exp-toggle" onclick="toggleExp()">
+      <div class="at-left">
+        <strong>这是一次"体验"</strong>
+        <div class="at-desc">不是实物,而是想去的地方/想做的事</div>
+      </div>
+      <div class="at-switch"></div>
+    </div>
+
+    <div class="aw-error" id="aw-error">请填写心愿名字和金额</div>
+    <button class="aw-confirm" onclick="saveNewWish()">✨ 加进心愿单</button>
+    <div class="ceremony-secondary" onclick="closeAddWish()" style="color:#95a5a6;">取消</div>
+  </div>
+</div>
+
 <div class="modal-bg" id="pwd" onclick="closePwd(event)" style="align-items:flex-end;">
   <div class="pwd-modal" onclick="event.stopPropagation()">
     <h3>🔒 输入交易密码</h3>
@@ -3288,7 +3473,7 @@ function renderWishlist() {
       </div>
     `;
   });
-  html += `<div class="add-wish">+ 加一个新心愿</div>`;
+  html += `<div class="add-wish" onclick="openAddWish()">+ 加一个新心愿</div>`;
   // achieved
   html += `
     <div class="achieved-section">
@@ -3317,6 +3502,63 @@ function switchWish(key) {
   currentWishKey = key;
   renderGoalCard();
   renderWishlist();
+}
+
+const EMOJI_OPTIONS = ['📱','🎮','🧱','🚴','🎸','⚽','📚','🎧','⌚','🎨','🛹','🪁','✈️','🎬','🎢','🏕️','🐶','🎂'];
+let pickedEmoji = '🎁';
+let pickedExp = false;
+
+function renderEmojiPicker() {
+  const p = document.getElementById('emoji-picker');
+  p.innerHTML = EMOJI_OPTIONS.map(e =>
+    `<div class="emoji-pick ${e===pickedEmoji?'selected':''}" onclick="pickEmoji('${e}')">${e}</div>`
+  ).join('');
+}
+function pickEmoji(e) {
+  pickedEmoji = e;
+  renderEmojiPicker();
+}
+function toggleExp() {
+  pickedExp = !pickedExp;
+  document.getElementById('aw-exp-toggle').classList.toggle('on', pickedExp);
+}
+function openAddWish() {
+  pickedEmoji = '🎁';
+  pickedExp = false;
+  document.getElementById('aw-name').value = '';
+  document.getElementById('aw-amount').value = '';
+  document.getElementById('aw-note').value = '';
+  document.getElementById('aw-error').classList.remove('show');
+  document.getElementById('aw-exp-toggle').classList.remove('on');
+  renderEmojiPicker();
+  document.getElementById('wishlist').classList.remove('show');
+  setTimeout(() => document.getElementById('addwish').classList.add('show'), 200);
+}
+function closeAddWish(e) {
+  if (e && e.target.id !== 'addwish') return;
+  document.getElementById('addwish').classList.remove('show');
+  setTimeout(() => { renderWishlist(); document.getElementById('wishlist').classList.add('show'); }, 200);
+}
+function saveNewWish() {
+  const name = document.getElementById('aw-name').value.trim();
+  const amount = parseInt(document.getElementById('aw-amount').value, 10);
+  const note = document.getElementById('aw-note').value.trim();
+  const err = document.getElementById('aw-error');
+  if (!name || !amount || amount <= 0) {
+    err.classList.add('show');
+    return;
+  }
+  const key = 'w' + Date.now();
+  wishes.push({
+    key, emoji: pickedEmoji, name, target: amount,
+    note: note ? '"' + note + '"' : '"小宇刚加的心愿"',
+    hearts: 0, exp: pickedExp,
+  });
+  document.getElementById('addwish').classList.remove('show');
+  setTimeout(() => {
+    renderWishlist();
+    document.getElementById('wishlist').classList.add('show');
+  }, 200);
 }
 
 function openWishlist() {
