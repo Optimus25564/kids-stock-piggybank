@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>piggystock — 给 10 后的股票储蓄罐</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #fff7e6;
+    color: #2d3436;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  /* hero */
+  .hero {
+    background: linear-gradient(160deg, #ff9a9e 0%, #fad0c4 40%, #ffeaa7 100%);
+    border-radius: 32px;
+    padding: 48px 28px 40px;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(255,154,158,0.35);
+    margin-bottom: 24px;
+  }
+  .hero::before {
+    content: '🐮';
+    position: absolute;
+    top: 24px; left: 24px;
+    font-size: 48px;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));
+  }
+  .hero::after {
+    content: '✨';
+    position: absolute;
+    top: 32px; right: 32px;
+    font-size: 24px;
+    animation: twinkle 2s infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.4; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  .hero .brand {
+    font-size: 13px;
+    letter-spacing: 4px;
+    opacity: 0.85;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .hero h1 {
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+    text-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .hero .tagline {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .hero .sub-tag {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 24px;
+  }
+  .hero .live-cta {
+    display: inline-block;
+    background: white;
+    color: #e84393;
+    padding: 14px 28px;
+    border-radius: 24px;
+    font-weight: 800;
+    font-size: 14px;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+  .hero .live-cta:hover { transform: translateY(-2px); }
+
+  /* section */
+  .section {
+    background: white;
+    border-radius: 24px;
+    padding: 28px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  }
+  .section .label {
+    display: inline-block;
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    color: #b8860b;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .section h2 {
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+  }
+  .section h2 .em { color: #ff6b6b; }
+  .section p {
+    font-size: 14px;
+    color: #2d3436;
+    margin-bottom: 8px;
+  }
+  .section p.muted { color: #636e72; font-size: 13px; }
+
+  /* personas */
+  .personas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .persona {
+    background: linear-gradient(160deg, #fff5f7 0%, #ffe0ec 100%);
+    border-radius: 18px;
+    padding: 18px;
+    text-align: center;
+  }
+  .persona.kid { background: linear-gradient(160deg, #d4f4dd 0%, #c8e6f5 100%); }
+  .persona .pemoji { font-size: 38px; line-height: 1; }
+  .persona .pname { font-size: 14px; font-weight: 800; margin-top: 6px; }
+  .persona .ptag { font-size: 11px; color: #636e72; margin-top: 4px; }
+
+  /* pain quotes */
+  .pain {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-top: 10px;
+    border-left: 4px solid #ff9a9e;
+  }
+  .pain.kid { border-left-color: #6a89cc; }
+  .pain .who { font-size: 11px; font-weight: 800; color: #95a5a6; letter-spacing: 1px; }
+  .pain .quote { font-size: 13px; color: #2d3436; margin-top: 4px; font-style: italic; line-height: 1.6; }
+
+  /* highlights grid */
+  .highlights {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .highlight {
+    display: flex;
+    gap: 14px;
+    background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
+    border-radius: 18px;
+    padding: 16px 18px;
+  }
+  .highlight .num {
+    width: 36px; height: 36px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 900;
+    color: #e17055;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  }
+  .highlight .htitle { font-size: 14px; font-weight: 800; }
+  .highlight .hdesc { font-size: 12px; color: #636e72; margin-top: 2px; line-height: 1.5; }
+
+  /* capability table */
+  .cap-table {
+    margin-top: 14px;
+  }
+  .cap-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+  .cap-row .ic {
+    font-size: 22px;
+    width: 32px; text-align: center;
+  }
+  .cap-row .cap-name { flex: 1; font-size: 13px; font-weight: 700; }
+  .cap-row .cap-status {
+    font-size: 11px;
+    background: #d4f4dd;
+    color: #00b894;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-weight: 700;
+  }
+
+  /* business */
+  .biz-card {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: white;
+    border-radius: 20px;
+    padding: 22px;
+    text-align: center;
+    margin-top: 12px;
+  }
+  .biz-card .biz-amount {
+    font-size: 32px;
+    font-weight: 900;
+    margin: 4px 0;
+  }
+  .biz-card .biz-label { font-size: 12px; opacity: 0.9; }
+  .biz-card .biz-desc { font-size: 11px; opacity: 0.85; margin-top: 8px; }
+
+  /* roadmap */
+  .roadmap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    overflow-x: auto;
+  }
+  .stop {
+    flex-shrink: 0;
+    background: white;
+    border: 2px solid #fdcb6e;
+    border-radius: 14px;
+    padding: 12px 14px;
+    text-align: center;
+    min-width: 100px;
+  }
+  .stop.first {
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-color: #ff6b6b;
+  }
+  .stop .stop-flag { font-size: 22px; line-height: 1; }
+  .stop .stop-name { font-size: 12px; font-weight: 800; margin-top: 4px; }
+  .stop .stop-tag { font-size: 9px; color: #95a5a6; margin-top: 1px; }
+  .stop-arrow { color: #fdcb6e; font-size: 18px; flex-shrink: 0; }
+
+  /* footer */
+  .footer {
+    text-align: center;
+    padding: 24px 12px 0;
+    color: #95a5a6;
+    font-size: 12px;
+  }
+  .footer a {
+    color: #ff6b6b;
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 40px 20px 32px; }
+    .hero h1 { font-size: 44px; }
+    .section { padding: 22px 18px; }
+    .section h2 { font-size: 19px; }
+    .personas { gap: 8px; }
+    .persona { padding: 14px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="brand">FUTU × KIDS</div>
+    <h1>piggystock</h1>
+    <div class="tagline">给 10 后的股票储蓄罐</div>
+    <div class="sub-tag">从存零花钱,到拥有第一只股票 · 陪伴 10 年的成长账户</div>
+    <a class="live-cta" href="./index.html">🐮 体验原型 →</a>
+  </div>
+
+  <div class="section">
+    <div class="label">PRODUCT</div>
+    <h2>一句话讲清楚 <span class="em">piggystock</span></h2>
+    <p>把传统的"小猪存钱罐"数字化,罐里装的不再是硬币,而是孩子人生第一只 <strong>苹果、迪士尼、SpaceX</strong>。</p>
+    <p>家长开户,孩子参与;通过 10 年的陪伴,在孩子 18 岁那天,这个储蓄罐里的资产 <strong>自动转移成他自己的 Futu 牛牛号</strong>。</p>
+  </div>
+
+  <div class="section">
+    <div class="label">USER</div>
+    <h2>谁会用 piggystock</h2>
+    <div class="personas">
+      <div class="persona">
+        <div class="pemoji">👨‍👩</div>
+        <div class="pname">家长</div>
+        <div class="ptag">富途现有投资者 · 6-18 岁孩子的爸妈</div>
+      </div>
+      <div class="persona kid">
+        <div class="pemoji">🧒</div>
+        <div class="pname">孩子</div>
+        <div class="ptag">6-18 岁 · 想存钱、想拥有"我自己的东西"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">PAIN POINTS</div>
+    <h2>他们正在被困住</h2>
+    <div class="pain">
+      <div class="who">家长</div>
+      <div class="quote">"我想培养孩子关于投资和理财的理念,但市场上没有合适的产品。传统储蓄罐和现代金融脱节太重了。"</div>
+    </div>
+    <div class="pain kid">
+      <div class="who">孩子</div>
+      <div class="quote">"零花钱不知道怎么花、不知道怎么能赚更多。但金融 App 又太复杂,而且我也开不了户。"</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">HIGHLIGHTS</div>
+    <h2>产品的 4 个亮点</h2>
+    <div class="highlights">
+      <div class="highlight">
+        <div class="num">1</div>
+        <div>
+          <div class="htitle">🐷 基于股票的储蓄罐</div>
+          <div class="hdesc">罐里不是现金,是真实持仓的碎股 — 每只股票一个会动的拟物罐子,涨跌用情绪而不是 K 线表达</div>
+        </div>
+      </div>
+      <div class="highlight">
+        <div class="num">2</div>
+        <div>
+          <div class="htitle">🐮 打通父母牛牛账户</div>
+          <div class="hdesc">家长用自己已有的牛牛账号 → 一键开通亲子联名账户 · 复用富途已有的碎股下单能力</div>
+        </div>
+      </div>
+      <div class="highlight">
+        <div class="num">3</div>
+        <div>
+          <div class="htitle">💰 多种入金方式</div>
+          <div class="hdesc">从牛牛号秒级调拨 · 天星银行一键入金 · FPS 转数快,覆盖香港家庭所有支付场景</div>
+        </div>
+      </div>
+      <div class="highlight">
+        <div class="num">4</div>
+        <div>
+          <div class="htitle">💖 心愿单 · 梦想兑换</div>
+          <div class="hdesc">家长和孩子共建心愿单(实物 + 体验类),达成目标后可以兑现 — 把投资连接到孩子真实的渴望</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">TECH</div>
+    <h2>技术实现 · 复用 ≠ 重做</h2>
+    <p class="muted">基于富途的牛牛账户作为上层应用搭建,复用富途的多账户体系和碎股交易能力做上层包装 — 不是另起炉灶,是在已有基础设施上做产品创新。</p>
+  </div>
+
+  <div class="section">
+    <div class="label">WHY US</div>
+    <h2>为什么是 <span class="em">富途</span> 能做</h2>
+    <div class="cap-table">
+      <div class="cap-row">
+        <div class="ic">🧩</div>
+        <div class="cap-name">碎股 / 按金额买入能力</div>
+        <div class="cap-status">已有</div>
+      </div>
+      <div class="cap-row">
+        <div class="ic">📜</div>
+        <div class="cap-name">香港证券牌照(未成年联名账户可落地)</div>
+        <div class="cap-status">完整</div>
+      </div>
+      <div class="cap-row">
+        <div class="ic">📡</div>
+        <div class="cap-name">行情数据 & 交易通道</div>
+        <div class="cap-status">成熟</div>
+      </div>
+      <div class="cap-row">
+        <div class="ic">👨‍👩‍👦</div>
+        <div class="cap-name">品牌 & 家庭客群基础</div>
+        <div class="cap-status">已有</div>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:14px;">边际成本极低 — 这个产品的瓶颈不在技术,而在产品形态和合规路径,而这两个富途都已经走通了。</p>
+  </div>
+
+  <div class="section">
+    <div class="label">BUSINESS</div>
+    <h2>商业模式</h2>
+    <div class="biz-card">
+      <div class="biz-label">主要收入</div>
+      <div class="biz-amount">0.5 ~ 1%</div>
+      <div class="biz-label">碎股交易 spread</div>
+      <div class="biz-desc">产品本身免费 · 通过家长的主账户 LTV + 10 年后转化的孩子用户回收价值</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">GO-TO-MARKET</div>
+    <h2>切入策略</h2>
+    <p><strong style="color:#ff6b6b;">优先做香港市场</strong> — 监管清晰、富途在港有完整牌照、未成年联名账户路径可走。成功后复制至新加坡、澳大利亚等海外市场。</p>
+    <div class="roadmap">
+      <div class="stop first">
+        <div class="stop-flag">🇭🇰</div>
+        <div class="stop-name">香港</div>
+        <div class="stop-tag">Phase 1</div>
+      </div>
+      <div class="stop-arrow">→</div>
+      <div class="stop">
+        <div class="stop-flag">🇸🇬</div>
+        <div class="stop-name">新加坡</div>
+        <div class="stop-tag">Phase 2</div>
+      </div>
+      <div class="stop-arrow">→</div>
+      <div class="stop">
+        <div class="stop-flag">🇦🇺</div>
+        <div class="stop-name">澳大利亚</div>
+        <div class="stop-tag">Phase 3</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="background:linear-gradient(160deg,#2c1810 0%,#4a2c1a 50%,#8b4513 100%);color:white;text-align:center;">
+    <div style="font-size:38px;line-height:1;margin-bottom:8px;">🎓</div>
+    <h2 style="color:white;">10 年后,他 18 岁</h2>
+    <p style="color:rgba(255,255,255,0.9);font-size:13px;">这个储蓄罐里的资产会自动转入他自己的 Futu 牛牛号 — <br>那一刻,piggystock 完成它的使命:<br><strong>培养出下一代 Futu 用户</strong>。</p>
+    <a class="live-cta" href="./index.html" style="color:#e17055;margin-top:18px;">🐮 体验完整原型 →</a>
+  </div>
+
+  <div class="footer">
+    piggystock · 一个为 Futu 设计的儿童股票储蓄概念产品<br>
+    <a href="./index.html">查看交互原型</a> · <a href="https://github.com/Optimus25564/kids-stock-piggybank">GitHub 仓库</a>
+  </div>
+</div>
+</body>
+</html>
