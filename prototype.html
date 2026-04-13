@@ -1236,6 +1236,544 @@
   .wish.achieved .w-icon { background: linear-gradient(135deg, #d4f4dd, #b8e8c4); }
   .wish.achieved .w-percent { color: #00b894; font-size: 16px; }
 
+  /* onboarding */
+  .onboard-modal {
+    background: white;
+    border-radius: 28px;
+    padding: 28px 24px 24px;
+    width: 92%;
+    max-width: 360px;
+    animation: pop 0.4s;
+    text-align: center;
+  }
+  .onboard-modal .ob-emoji {
+    font-size: 56px;
+    line-height: 1;
+    display: inline-block;
+    animation: bounceIn 0.6s;
+    margin-bottom: 8px;
+  }
+  .onboard-modal h2 {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  .onboard-modal .ob-sub {
+    font-size: 12px;
+    color: #95a5a6;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .onboard-tip {
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 11px;
+    color: #856404;
+    line-height: 1.5;
+    margin-bottom: 18px;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .onboard-tip .tip-icon { font-size: 14px; flex-shrink: 0; }
+  .ob-field { margin-bottom: 12px; text-align: left; }
+  .ob-field .ob-label {
+    font-size: 11px;
+    color: #636e72;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .ob-field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #f0f3f5;
+    border-radius: 14px;
+    font-size: 14px;
+    background: #f8f9fa;
+    color: #2d3436;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+  }
+  .ob-field input:focus {
+    border-color: #fdcb6e;
+    background: white;
+  }
+  .ob-confirm {
+    width: 100%;
+    background: linear-gradient(135deg, #ff6b6b, #ff9a9e);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255,107,107,0.3);
+    margin-top: 6px;
+  }
+  .ob-confirm:active { transform: scale(0.98); }
+  .ob-error {
+    color: #e17055;
+    font-size: 11px;
+    margin-top: 6px;
+    text-align: left;
+    display: none;
+  }
+  .ob-error.show { display: block; }
+
+  /* 18-year graduation ceremony */
+  .ceremony-modal {
+    background: linear-gradient(180deg, #2c1810 0%, #4a2c1a 25%, #8b4513 50%, #d4a574 75%, #fff5d6 100%);
+    border-radius: 28px;
+    width: 96%;
+    max-width: 400px;
+    max-height: 94vh;
+    overflow-y: auto;
+    animation: pop 0.5s;
+    color: white;
+    position: relative;
+  }
+  .ceremony-modal::-webkit-scrollbar { display: none; }
+  .ceremony-stars {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 200px;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .ceremony-stars span {
+    position: absolute;
+    color: #fff;
+    font-size: 12px;
+    animation: twinkle 2s infinite;
+  }
+  .ceremony-stars .s1 { top: 20px; left: 30px; animation-delay: 0s; }
+  .ceremony-stars .s2 { top: 50px; left: 80px; font-size: 8px; animation-delay: 0.5s; }
+  .ceremony-stars .s3 { top: 30px; right: 50px; font-size: 14px; animation-delay: 1s; }
+  .ceremony-stars .s4 { top: 80px; right: 30px; animation-delay: 1.5s; }
+  .ceremony-stars .s5 { top: 100px; left: 50px; font-size: 10px; animation-delay: 0.8s; }
+  .ceremony-stars .s6 { top: 130px; right: 80px; font-size: 11px; animation-delay: 0.3s; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.3); }
+  }
+  .ceremony-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    color: white;
+  }
+  .ceremony-hero {
+    text-align: center;
+    padding: 50px 20px 24px;
+    position: relative;
+  }
+  .ceremony-cap {
+    font-size: 72px;
+    line-height: 1;
+    margin-bottom: 12px;
+    display: inline-block;
+    animation: bounceIn 0.8s;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+  }
+  .ceremony-headline {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .ceremony-subhead {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+  .ceremony-date {
+    font-size: 11px;
+    opacity: 0.7;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    padding: 4px 12px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+  .ceremony-niuniu {
+    text-align: center;
+    margin: 14px 0 24px;
+    position: relative;
+  }
+  .ceremony-niuniu .grown-niuniu {
+    font-size: 96px;
+    line-height: 1;
+    display: inline-block;
+    animation: hop 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 12px 24px rgba(255,154,0,0.6));
+  }
+  .ceremony-niuniu .crown {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    animation: float 3s ease-in-out infinite;
+  }
+  .ceremony-niuniu .niu-name {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #fff5d6;
+    font-weight: 700;
+  }
+
+  .ceremony-body {
+    background: linear-gradient(180deg, transparent 0%, #fff5d6 8%, #fff9e6 100%);
+    padding: 40px 20px 24px;
+    border-radius: 0 0 28px 28px;
+    margin-top: -20px;
+    color: #2d3436;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stat-tile {
+    background: white;
+    border-radius: 16px;
+    padding: 14px 12px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  }
+  .stat-tile .st-label { font-size: 10px; color: #95a5a6; }
+  .stat-tile .st-value { font-size: 18px; font-weight: 800; color: #2d3436; margin-top: 2px; }
+  .stat-tile .st-sub { font-size: 9px; color: #95a5a6; margin-top: 1px; }
+  .stat-tile.highlight { background: linear-gradient(135deg, #fff5d6, #ffeaa7); }
+  .stat-tile.highlight .st-value { color: #e17055; font-size: 22px; }
+
+  .letter-card {
+    background: linear-gradient(135deg, #fff 0%, #fff9e6 100%);
+    border: 2px solid #fdcb6e;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(253,203,110,0.25);
+    position: relative;
+  }
+  .letter-card::before {
+    content: '💌';
+    position: absolute;
+    top: -14px;
+    left: 18px;
+    background: white;
+    padding: 0 8px;
+    font-size: 22px;
+  }
+  .letter-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    margin-top: 4px;
+  }
+  .letter-header .avatar {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, #ffd6a5, #ffb88c);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .letter-header .letter-from { font-size: 13px; font-weight: 800; }
+  .letter-header .letter-when { font-size: 10px; color: #95a5a6; margin-top: 1px; }
+  .letter-audio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff5d6;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .letter-audio .play-btn {
+    width: 32px; height: 32px;
+    background: #fdcb6e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .letter-audio .wave {
+    flex: 1;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .letter-audio .wave span {
+    flex: 1;
+    background: #fdcb6e;
+    border-radius: 2px;
+    opacity: 0.6;
+  }
+  .letter-audio .wave span:nth-child(1) { height: 30%; }
+  .letter-audio .wave span:nth-child(2) { height: 60%; }
+  .letter-audio .wave span:nth-child(3) { height: 80%; }
+  .letter-audio .wave span:nth-child(4) { height: 100%; }
+  .letter-audio .wave span:nth-child(5) { height: 70%; }
+  .letter-audio .wave span:nth-child(6) { height: 50%; }
+  .letter-audio .wave span:nth-child(7) { height: 90%; }
+  .letter-audio .wave span:nth-child(8) { height: 60%; }
+  .letter-audio .wave span:nth-child(9) { height: 40%; }
+  .letter-audio .wave span:nth-child(10) { height: 70%; }
+  .letter-audio .wave span:nth-child(11) { height: 50%; }
+  .letter-audio .wave span:nth-child(12) { height: 30%; }
+  .letter-audio .duration { font-size: 11px; color: #95a5a6; }
+  .letter-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #2d3436;
+    background: #fff9e6;
+    padding: 14px;
+    border-radius: 12px;
+    font-style: italic;
+    position: relative;
+  }
+  .letter-text::before {
+    content: '"';
+    font-size: 32px;
+    color: #fdcb6e;
+    line-height: 0.5;
+    vertical-align: -10px;
+    margin-right: 2px;
+  }
+  .letter-sign {
+    text-align: right;
+    font-size: 12px;
+    color: #636e72;
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  .first-trade-card {
+    background: white;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .first-trade-card .ft-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .first-trade-card .ft-info { flex: 1; }
+  .first-trade-card .ft-label { font-size: 10px; color: #95a5a6; font-weight: 700; }
+  .first-trade-card .ft-name { font-size: 14px; font-weight: 800; margin: 2px 0; }
+  .first-trade-card .ft-quote { font-size: 11px; color: #636e72; font-style: italic; }
+
+  .ceremony-cta {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff9a9e 50%, #fdcb6e 100%);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 18px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+  .ceremony-cta:active { transform: scale(0.98); }
+  .ceremony-secondary {
+    text-align: center;
+    font-size: 12px;
+    color: #95a5a6;
+    margin-top: 14px;
+    cursor: pointer;
+  }
+  .ceremony-secondary u { text-decoration-color: #fdcb6e; }
+
+  /* share card */
+  .share-modal {
+    width: 92%;
+    max-width: 360px;
+    animation: pop 0.4s;
+  }
+  .share-card {
+    background: linear-gradient(180deg, #2c1810 0%, #4a2c1a 30%, #8b4513 55%, #d4a574 80%, #fff5d6 100%);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .share-card-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 200px;
+    pointer-events: none;
+  }
+  .share-content {
+    position: relative;
+    padding: 24px 22px 22px;
+    text-align: center;
+    color: white;
+  }
+  .share-brand {
+    font-size: 11px;
+    opacity: 0.85;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    padding: 5px 12px;
+    border-radius: 12px;
+    display: inline-block;
+  }
+  .share-niuniu {
+    font-size: 88px;
+    line-height: 1;
+    margin: 8px 0 6px;
+    filter: drop-shadow(0 12px 24px rgba(255,154,0,0.6));
+    display: block;
+  }
+  .share-headline {
+    font-size: 26px;
+    font-weight: 900;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    margin-bottom: 4px;
+  }
+  .share-tag {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-bottom: 18px;
+  }
+  .share-stats {
+    background: rgba(255,255,255,0.95);
+    color: #2d3436;
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .share-stats .ss-row {
+    flex: 1;
+    text-align: center;
+  }
+  .share-stats .ss-num {
+    font-size: 20px;
+    font-weight: 900;
+    color: #2d3436;
+    letter-spacing: -0.5px;
+  }
+  .share-stats .ss-num.green { color: #00b894; }
+  .share-stats .ss-label {
+    font-size: 10px;
+    color: #95a5a6;
+    margin-top: 2px;
+  }
+  .share-stats .ss-divider {
+    width: 1px;
+    height: 36px;
+    background: #f0f3f5;
+  }
+  .share-quote {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 13px;
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .share-quote small {
+    font-size: 10px;
+    opacity: 0.7;
+    font-style: normal;
+  }
+  .share-foot {
+    background: rgba(255,255,255,0.95);
+    color: #2d3436;
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
+  .share-foot .share-qr {
+    width: 44px; height: 44px;
+    background: #2d3436;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .share-foot .share-foot-text { flex: 1; font-size: 12px; font-weight: 700; }
+  .share-foot .share-foot-text .small { font-size: 9px; color: #95a5a6; font-weight: 400; margin-top: 1px; }
+
+  .share-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .share-btn {
+    background: white;
+    border-radius: 14px;
+    padding: 12px 6px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #2d3436;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+  }
+  .share-btn:active { transform: scale(0.95); }
+  .share-btn span {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
   /* story timeline */
   .story-section {
     margin: 0 20px 24px;
@@ -1544,7 +2082,7 @@
   <div class="header">
     <div class="greet">
       欢迎回来
-      <strong>小宇的储蓄罐 🏠</strong>
+      <strong id="header-title">小宇的股票储蓄罐 🏠</strong>
     </div>
     <div class="coin-badge" onclick="openAlbum()">📖 卡册 5/12</div>
   </div>
@@ -1552,7 +2090,7 @@
   <div class="total-card">
     <div class="joint-bar">
       <span class="verified">✅</span>
-      <span class="names">爸爸 &amp; 小宇</span>
+      <span class="names" id="joint-names">爸爸 &amp; 小宇</span>
       <span style="opacity:0.8;">· 联名账户</span>
     </div>
     <button class="deposit-btn" onclick="openDeposit()">+ 入金</button>
@@ -1573,23 +2111,22 @@
 
   <div class="goal-card">
     <div class="goal-header">
-      <div class="goal-icon">📱</div>
+      <div class="goal-icon" id="goal-icon">📱</div>
       <div class="goal-info">
         <div class="goal-title">我的小目标</div>
-        <div class="goal-name">攒一台 iPhone 17</div>
+        <div class="goal-name" id="goal-name">攒一台 iPhone 17</div>
       </div>
       <div class="goal-edit" onclick="openWishlist()">心愿单 →</div>
     </div>
     <div class="goal-progress-row">
-      <div class="goal-current">HK$ 2,847 <span class="of">/ 10,000</span></div>
-      <div class="goal-percent">28%</div>
+      <div class="goal-current">HK$ 2,847 <span class="of">/ <span id="goal-target">10,000</span></span></div>
+      <div class="goal-percent" id="goal-percent">28%</div>
     </div>
     <div class="goal-bar">
-      <div class="goal-bar-fill"></div>
+      <div class="goal-bar-fill" id="goal-bar-fill" style="width:28%"></div>
     </div>
     <div class="goal-foot">
-      <div class="left">💪 还差 <strong style="margin:0 3px;">HK$ 7,153</strong></div>
-      <div>按现在速度 · 大概 <strong style="color:#00b894;">11 个月</strong></div>
+      <div class="left">💪 还差 <strong style="margin:0 3px;" id="goal-remaining">HK$ 7,153</strong></div>
     </div>
   </div>
 
@@ -1715,7 +2252,7 @@
         </div>
       </div>
 
-      <div class="graduation-card">
+      <div class="graduation-card" onclick="openCeremony()" style="cursor:pointer;">
         <div class="grad-top">
           <div class="grad-emoji">🎓</div>
           <div class="grad-info">
@@ -1797,104 +2334,188 @@
   <div class="wishlist-modal" onclick="event.stopPropagation()">
     <div class="wishlist-header">
       <h2>💖 小宇的心愿单</h2>
-      <div class="sub">我想要的东西 · 我想去的地方</div>
+      <div class="sub">点一下任意心愿 · 切换成现在在攒的目标</div>
     </div>
-
-    <div class="wishlist-current">
-      <span class="now-tag">⭐ 现在在攒</span>
-      <div class="wish" style="background:transparent;padding:0;margin:0;border:none;">
-        <div class="w-icon">📱</div>
-        <div class="w-info">
-          <div class="w-name">iPhone 17</div>
-          <div class="w-price">HK$ 10,000 · 攒了 2,847</div>
-          <div class="w-mini-bar"><div class="w-mini-fill" style="width:28%"></div></div>
-          <div class="w-note">"我想用它给妈妈拍照片" — 小宇,2026年2月</div>
-        </div>
-        <div class="w-percent">28%</div>
-      </div>
-    </div>
-
-    <div class="wishlist-section-title">
-      <span>📋 还想要的</span>
-      <span>5 个心愿</span>
-    </div>
-
-    <div class="wish">
-      <div class="w-icon">🎮</div>
-      <div class="w-info">
-        <div class="w-name">Switch 2 <span class="heart-tag">❤ 想了 3 次</span></div>
-        <div class="w-price">HK$ 3,000</div>
-        <div class="w-note">"和爸爸一起玩马力欧"</div>
-      </div>
-      <div class="w-percent">95%</div>
-    </div>
-
-    <div class="wish">
-      <div class="w-icon">🧱</div>
-      <div class="w-info">
-        <div class="w-name">乐高千年隼</div>
-        <div class="w-price">HK$ 8,000</div>
-        <div class="w-note">"星战里最酷的飞船!"</div>
-      </div>
-      <div class="w-percent">35%</div>
-    </div>
-
-    <div class="wish experience">
-      <div class="w-icon">✈️</div>
-      <div class="w-info">
-        <div class="w-name">和爸爸去日本看樱花 <span class="heart-tag">体验</span></div>
-        <div class="w-price">HK$ 15,000</div>
-        <div class="w-note">"明年春天可以吗?"</div>
-      </div>
-      <div class="w-percent">19%</div>
-    </div>
-
-    <div class="wish">
-      <div class="w-icon">🚴</div>
-      <div class="w-info">
-        <div class="w-name">捷安特山地车</div>
-        <div class="w-price">HK$ 5,000</div>
-        <div class="w-note">"想骑去学校"</div>
-      </div>
-      <div class="w-percent">57%</div>
-    </div>
-
-    <div class="wish experience">
-      <div class="w-icon">🎸</div>
-      <div class="w-info">
-        <div class="w-name">小吉他 + 一年课</div>
-        <div class="w-price">HK$ 4,500</div>
-        <div class="w-note">"我想学《晴天》给妈妈听"</div>
-      </div>
-      <div class="w-percent">63%</div>
-    </div>
-
-    <div class="add-wish">+ 加一个新心愿</div>
-
-    <div class="achieved-section">
-      <div class="wishlist-section-title">
-        <span>🏆 已经实现的</span>
-        <span>2 个</span>
-      </div>
-      <div class="wish achieved">
-        <div class="w-icon">📚</div>
-        <div class="w-info">
-          <div class="w-name">哈利波特全套</div>
-          <div class="w-price">HK$ 1,200 · 2025年12月 完成</div>
-        </div>
-        <div class="w-percent">✓</div>
-      </div>
-      <div class="wish achieved">
-        <div class="w-icon">⚽</div>
-        <div class="w-info">
-          <div class="w-name">足球 + 球鞋</div>
-          <div class="w-price">HK$ 800 · 2025年9月 完成</div>
-        </div>
-        <div class="w-percent">✓</div>
-      </div>
-    </div>
-
+    <div id="wishlist-content"></div>
     <button class="close" onclick="closeWishlist()" style="display:block;margin:16px auto 0;">关上心愿单</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="onboard">
+  <div class="onboard-modal" onclick="event.stopPropagation()">
+    <div class="ob-emoji">🐮</div>
+    <h2>欢迎来到小小股票储蓄罐</h2>
+    <div class="ob-sub">绑定家长牛牛号 · 开启亲子投资之旅</div>
+
+    <div class="onboard-tip">
+      <span class="tip-icon">💡</span>
+      <span>输入家长牛牛号后,会自动关联对应的亲子账号 — 孩子端的所有操作都在家长的监管下进行。</span>
+    </div>
+
+    <div class="ob-field">
+      <label class="ob-label">家长牛牛号</label>
+      <input id="ob-account" type="text" placeholder="请输入 Futu 牛牛账号" autocomplete="off">
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">登录密码</label>
+      <input id="ob-password" type="password" placeholder="默认密码 8888" autocomplete="off">
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">孩子的名字</label>
+      <input id="ob-childname" type="text" placeholder="例如:小宇" autocomplete="off">
+    </div>
+
+    <div class="ob-error" id="ob-error">请填写所有信息</div>
+
+    <button class="ob-confirm" onclick="confirmOnboard()">确认绑定 · 开启储蓄罐 →</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="ceremony" onclick="closeCeremony(event)">
+  <div class="ceremony-modal" onclick="event.stopPropagation()">
+    <div class="ceremony-stars">
+      <span class="s1">✨</span>
+      <span class="s2">⭐</span>
+      <span class="s3">✨</span>
+      <span class="s4">⭐</span>
+      <span class="s5">✨</span>
+      <span class="s6">⭐</span>
+    </div>
+    <div class="ceremony-close" onclick="closeCeremony()">×</div>
+
+    <div class="ceremony-hero">
+      <div class="ceremony-cap">🎓</div>
+      <div class="ceremony-headline">小宇,你 18 岁啦!</div>
+      <div class="ceremony-subhead">牛牛陪你走了 10 年 4 个月</div>
+      <div class="ceremony-date">2036 年 8 月 12 日</div>
+    </div>
+
+    <div class="ceremony-niuniu">
+      <span class="crown">👑</span>
+      <span class="grown-niuniu">🐂</span>
+      <div class="niu-name">"大牛先生" · 满级 Lv.10</div>
+    </div>
+
+    <div class="ceremony-body">
+      <div class="stats-grid">
+        <div class="stat-tile highlight">
+          <div class="st-label">当前总值</div>
+          <div class="st-value">HK$ 86,420</div>
+          <div class="st-sub">总收益 +186%</div>
+        </div>
+        <div class="stat-tile">
+          <div class="st-label">总投入</div>
+          <div class="st-value">HK$ 30,200</div>
+          <div class="st-sub">10 年累计</div>
+        </div>
+        <div class="stat-tile">
+          <div class="st-label">陪你走过</div>
+          <div class="st-value">3,776 天</div>
+          <div class="st-sub">从 8 岁到 18 岁</div>
+        </div>
+        <div class="stat-tile">
+          <div class="st-label">写下故事</div>
+          <div class="st-value">47 个</div>
+          <div class="st-sub">收藏卡 12/12 ✨</div>
+        </div>
+      </div>
+
+      <div class="letter-card">
+        <div class="letter-header">
+          <div class="avatar">👨</div>
+          <div>
+            <div class="letter-from">爸爸的话</div>
+            <div class="letter-when">2025 年 8 月 12 日 · 你 8 岁开户那天录的</div>
+          </div>
+        </div>
+
+        <div class="letter-audio">
+          <div class="play-btn">▶</div>
+          <div class="wave">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="duration">1:48</div>
+        </div>
+
+        <div class="letter-text">
+          小宇,如果你正在看到这条消息,说明你已经 18 岁了,而爸爸第一次写这封信的时候,你才刚刚 8 岁。<br><br>
+          那天你拉着我的手,问我什么是"股票"。我没办法用一句话告诉你,所以我们一起开了这个储蓄罐。爸爸希望你长大后明白:**钱不是用来囤的,是用来支持你相信的事的。**<br><br>
+          这十年里你一定经历过很多次涨和跌。如果你坚持到了今天,爸爸为你骄傲。从今天开始,这个账户就是你自己的了。你想怎么用,都可以 — 但记得那个 8 岁的你,曾经说过:<br>
+          <strong>"我想用它给妈妈拍照片。"</strong>
+        </div>
+        <div class="letter-sign">— 爸爸,2025.8.12</div>
+      </div>
+
+      <div class="first-trade-card">
+        <div class="ft-icon">🍎</div>
+        <div class="ft-info">
+          <div class="ft-label">你的第一笔投资</div>
+          <div class="ft-name">苹果 · 2025年9月3日</div>
+          <div class="ft-quote">"我想买苹果,因为爸爸的 iPhone 是苹果做的"</div>
+        </div>
+      </div>
+
+      <button class="ceremony-cta" onclick="openShare()">🎉 继承我的牛牛号 →</button>
+      <div class="ceremony-secondary" onclick="openShare()">📤 <u>把这一刻分享给朋友</u></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="share" onclick="closeShare(event)">
+  <div class="share-modal" onclick="event.stopPropagation()">
+    <div class="share-card">
+      <div class="share-card-bg">
+        <div class="ceremony-stars">
+          <span class="s1">✨</span>
+          <span class="s2">⭐</span>
+          <span class="s3">✨</span>
+          <span class="s4">⭐</span>
+          <span class="s5">✨</span>
+          <span class="s6">⭐</span>
+        </div>
+      </div>
+      <div class="share-content">
+        <div class="share-brand">🐮 Futu · 小小股票储蓄罐</div>
+        <div class="share-niuniu">🐂</div>
+        <div class="share-headline">小宇 18 岁啦 🎓</div>
+        <div class="share-tag">陪伴 10 年的牛牛 · 今日毕业</div>
+
+        <div class="share-stats">
+          <div class="ss-row">
+            <div class="ss-num">HK$ 86,420</div>
+            <div class="ss-label">10 年攒下</div>
+          </div>
+          <div class="ss-divider"></div>
+          <div class="ss-row">
+            <div class="ss-num green">+186%</div>
+            <div class="ss-label">总收益</div>
+          </div>
+        </div>
+
+        <div class="share-quote">
+          "我想用它给妈妈拍照片"<br>
+          <small>— 8 岁的小宇,在买下第一只苹果股票时说</small>
+        </div>
+
+        <div class="share-foot">
+          <div class="share-qr">▦</div>
+          <div class="share-foot-text">
+            <div>开启你孩子的牛牛</div>
+            <div class="small">扫码下载 Futu 牛牛 App</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-actions">
+      <div class="share-btn"><span>📷</span>保存图片</div>
+      <div class="share-btn"><span>💬</span>WhatsApp</div>
+      <div class="share-btn"><span>📱</span>微信</div>
+      <div class="share-btn"><span>📋</span>复制链接</div>
+    </div>
+
+    <button class="close" onclick="closeShare()" style="display:block;margin:14px auto 0;background:#f0f3f5;color:#636e72;">关闭</button>
   </div>
 </div>
 
@@ -2201,7 +2822,160 @@ function renderAlbum() {
   }).join('');
 }
 
+function confirmOnboard() {
+  const acct = document.getElementById('ob-account').value.trim();
+  const pwd = document.getElementById('ob-password').value.trim();
+  const name = document.getElementById('ob-childname').value.trim();
+  const err = document.getElementById('ob-error');
+  if (!acct || !pwd || !name) {
+    err.textContent = '请填写所有信息';
+    err.classList.add('show');
+    return;
+  }
+  if (pwd !== '8888') {
+    err.textContent = '密码错误,默认密码是 8888';
+    err.classList.add('show');
+    return;
+  }
+  err.classList.remove('show');
+  document.getElementById('header-title').textContent = name + '的股票储蓄罐 🏠';
+  document.getElementById('joint-names').textContent = '爸爸 & ' + name;
+  try { localStorage.setItem('piggybank_child', name); } catch(e) {}
+  document.getElementById('onboard').classList.remove('show');
+}
+window.addEventListener('DOMContentLoaded', () => {
+  let saved = null;
+  try { saved = localStorage.getItem('piggybank_child'); } catch(e) {}
+  if (saved) {
+    document.getElementById('header-title').textContent = saved + '的股票储蓄罐 🏠';
+    document.getElementById('joint-names').textContent = '爸爸 & ' + saved;
+  } else {
+    document.getElementById('onboard').classList.add('show');
+  }
+});
+
+function openCeremony() {
+  document.getElementById('ceremony').classList.add('show');
+}
+function closeCeremony(e) {
+  if (e && e.target.id !== 'ceremony') return;
+  document.getElementById('ceremony').classList.remove('show');
+}
+function openShare() {
+  document.getElementById('share').classList.add('show');
+}
+function closeShare(e) {
+  if (e && e.target.id !== 'share') return;
+  document.getElementById('share').classList.remove('show');
+}
+
+const SAVED = 2847;
+const wishes = [
+  { key:'iphone', emoji:'📱', name:'iPhone 17',         target:10000, note:'"我想用它给妈妈拍照片"',     hearts:0, exp:false },
+  { key:'switch', emoji:'🎮', name:'Switch 2',          target:3000,  note:'"和爸爸一起玩马力欧"',       hearts:3, exp:false },
+  { key:'lego',   emoji:'🧱', name:'乐高千年隼',          target:8000,  note:'"星战里最酷的飞船!"',       hearts:0, exp:false },
+  { key:'japan',  emoji:'✈️', name:'和爸爸去日本看樱花',   target:15000, note:'"明年春天可以吗?"',         hearts:0, exp:true  },
+  { key:'bike',   emoji:'🚴', name:'捷安特山地车',         target:5000,  note:'"想骑去学校"',             hearts:0, exp:false },
+  { key:'guitar', emoji:'🎸', name:'小吉他 + 一年课',      target:4500,  note:'"我想学《晴天》给妈妈听"',  hearts:0, exp:true  },
+];
+const achieved = [
+  { emoji:'📚', name:'哈利波特全套', price:'HK$ 1,200 · 2025年12月 完成' },
+  { emoji:'⚽', name:'足球 + 球鞋',  price:'HK$ 800 · 2025年9月 完成' },
+];
+let currentWishKey = 'iphone';
+
+function fmt(n) { return n.toLocaleString('en-US'); }
+function pct(target) { return Math.min(100, Math.round(SAVED / target * 100)); }
+
+function renderGoalCard() {
+  const w = wishes.find(x => x.key === currentWishKey);
+  const p = pct(w.target);
+  document.getElementById('goal-icon').textContent = w.emoji;
+  document.getElementById('goal-name').textContent = '攒一个 ' + w.name;
+  document.getElementById('goal-target').textContent = fmt(w.target);
+  document.getElementById('goal-percent').textContent = p + '%';
+  document.getElementById('goal-bar-fill').style.width = p + '%';
+  const remaining = Math.max(0, w.target - SAVED);
+  document.getElementById('goal-remaining').textContent = 'HK$ ' + fmt(remaining);
+}
+
+function renderWishlist() {
+  const container = document.getElementById('wishlist-content');
+  const current = wishes.find(x => x.key === currentWishKey);
+  const others = wishes.filter(x => x.key !== currentWishKey);
+
+  let html = '';
+  // current wish (highlighted)
+  const cp = pct(current.target);
+  html += `
+    <div class="wishlist-current">
+      <span class="now-tag">⭐ 现在在攒</span>
+      <div class="wish" style="background:transparent;padding:0;margin:0;border:none;">
+        <div class="w-icon">${current.emoji}</div>
+        <div class="w-info">
+          <div class="w-name">${current.name}${current.exp?' <span class="heart-tag">体验</span>':''}</div>
+          <div class="w-price">HK$ ${fmt(current.target)} · 攒了 ${fmt(SAVED)}</div>
+          <div class="w-mini-bar"><div class="w-mini-fill" style="width:${cp}%"></div></div>
+          <div class="w-note">${current.note}</div>
+        </div>
+        <div class="w-percent">${cp}%</div>
+      </div>
+    </div>
+    <div class="wishlist-section-title">
+      <span>📋 还想要的</span>
+      <span>${others.length} 个心愿 · 点一下切换</span>
+    </div>
+  `;
+  // other wishes
+  others.forEach(w => {
+    const p = pct(w.target);
+    const heart = w.hearts ? `<span class="heart-tag">❤ 想了 ${w.hearts} 次</span>` : '';
+    const exp = w.exp ? `<span class="heart-tag">体验</span>` : '';
+    html += `
+      <div class="wish ${w.exp?'experience':''}" onclick="switchWish('${w.key}')">
+        <div class="w-icon">${w.emoji}</div>
+        <div class="w-info">
+          <div class="w-name">${w.name} ${heart}${exp}</div>
+          <div class="w-price">HK$ ${fmt(w.target)}</div>
+          <div class="w-note">${w.note}</div>
+        </div>
+        <div class="w-percent">${p}%</div>
+      </div>
+    `;
+  });
+  html += `<div class="add-wish">+ 加一个新心愿</div>`;
+  // achieved
+  html += `
+    <div class="achieved-section">
+      <div class="wishlist-section-title">
+        <span>🏆 已经实现的</span>
+        <span>${achieved.length} 个</span>
+      </div>
+  `;
+  achieved.forEach(a => {
+    html += `
+      <div class="wish achieved">
+        <div class="w-icon">${a.emoji}</div>
+        <div class="w-info">
+          <div class="w-name">${a.name}</div>
+          <div class="w-price">${a.price}</div>
+        </div>
+        <div class="w-percent">✓</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function switchWish(key) {
+  currentWishKey = key;
+  renderGoalCard();
+  renderWishlist();
+}
+
 function openWishlist() {
+  renderWishlist();
   document.getElementById('wishlist').classList.add('show');
 }
 function closeWishlist(e) {
