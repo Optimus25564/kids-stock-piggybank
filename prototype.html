@@ -3214,7 +3214,6 @@
           <div class="a-icon">👨</div>
           <div class="a-label">从</div>
           <div class="a-name">爸爸的牛牛号</div>
-          <div class="a-balance">余额 HK$ 24,580</div>
         </div>
         <div class="account-arrow">→</div>
         <div class="account-box dest">
@@ -3238,18 +3237,7 @@
         <span>手续费</span><span class="v green">免费</span>
       </div>
       <div class="info-row">
-        <span>调拨后我的牛牛号余额</span><span class="v" id="tr-after-source">HK$ 24,080</span>
-      </div>
-      <div class="info-row">
         <span>调拨后小宇的零花钱</span><span class="v" id="tr-after-dest">HK$ 1,000</span>
-      </div>
-
-      <div class="auto-toggle">
-        <span class="at-icon">🔄</span>
-        <div class="at-text">设为<strong>每月 1 号自动调拨</strong> HK$ <span id="tr-auto-amt">500</span><br>
-          <div class="auto-quick" id="tr-auto-quick"></div>
-        </div>
-        <div class="switch-mini"></div>
       </div>
 
       <button class="confirm-cta" id="tr-cta" onclick="confirmTransfer('从牛牛号调拨')">确认调拨 HK$ 500</button>
@@ -3306,14 +3294,6 @@
       </div>
       <div class="info-row">
         <span>每日限额</span><span class="v">HK$ 50,000</span>
-      </div>
-
-      <div class="auto-toggle">
-        <span class="at-icon">📅</span>
-        <div class="at-text">开启<strong>每月自动定投</strong> HK$ <span id="oc-auto-amt">500</span><br>
-          <div class="auto-quick" id="oc-auto-quick"></div>
-        </div>
-        <div class="switch-mini"></div>
       </div>
 
       <button class="confirm-cta" id="oc-cta" onclick="confirmOneClick()">一键入金 HK$ 500</button>
@@ -3752,12 +3732,9 @@ function completeDeposit(source) {
   setTimeout(() => document.getElementById('success').classList.add('show'), 200);
 }
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000];
-const SOURCE_BAL = 24580;
 const CHILD_CASH = 500;
 let trAmount = 500;
-let trAutoAmount = 500;
 let ocAmount = 500;
-let ocAutoAmount = 500;
 
 function fmtNum(n) { return n.toLocaleString('en-US'); }
 
@@ -3765,21 +3742,12 @@ function renderTrQuick() {
   document.getElementById('tr-quick').innerHTML = QUICK_AMOUNTS.map(a =>
     `<div class="quick-btn ${a===trAmount?'active':''}" onclick="setTrAmount(${a})">${fmtNum(a)}</div>`
   ).join('');
-  document.getElementById('tr-auto-quick').innerHTML = QUICK_AMOUNTS.map(a =>
-    `<div class="aq-btn ${a===trAutoAmount?'active':''}" onclick="setTrAutoAmount(${a})">${fmtNum(a)}</div>`
-  ).join('');
 }
 function setTrAmount(a) {
   trAmount = a;
   document.getElementById('tr-amt').textContent = fmtNum(a);
-  document.getElementById('tr-after-source').textContent = 'HK$ ' + fmtNum(SOURCE_BAL - a);
   document.getElementById('tr-after-dest').textContent = 'HK$ ' + fmtNum(CHILD_CASH + a);
   document.getElementById('tr-cta').textContent = '确认调拨 HK$ ' + fmtNum(a);
-  renderTrQuick();
-}
-function setTrAutoAmount(a) {
-  trAutoAmount = a;
-  document.getElementById('tr-auto-amt').textContent = fmtNum(a);
   renderTrQuick();
 }
 
@@ -3787,19 +3755,11 @@ function renderOcQuick() {
   document.getElementById('oc-quick').innerHTML = QUICK_AMOUNTS.map(a =>
     `<div class="quick-btn ${a===ocAmount?'active':''}" onclick="setOcAmount(${a})">${fmtNum(a)}</div>`
   ).join('');
-  document.getElementById('oc-auto-quick').innerHTML = QUICK_AMOUNTS.map(a =>
-    `<div class="aq-btn ${a===ocAutoAmount?'active':''}" onclick="setOcAutoAmount(${a})">${fmtNum(a)}</div>`
-  ).join('');
 }
 function setOcAmount(a) {
   ocAmount = a;
   document.getElementById('oc-amt').textContent = fmtNum(a);
   document.getElementById('oc-cta').textContent = '一键入金 HK$ ' + fmtNum(a);
-  renderOcQuick();
-}
-function setOcAutoAmount(a) {
-  ocAutoAmount = a;
-  document.getElementById('oc-auto-amt').textContent = fmtNum(a);
   renderOcQuick();
 }
 
