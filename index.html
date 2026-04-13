@@ -3351,6 +3351,25 @@
   </div>
 </div>
 
+<div class="modal-bg" id="pickjar" onclick="closePickJar(event)">
+  <div class="addjar-modal" onclick="event.stopPropagation()">
+    <div class="addjar-header">
+      <div class="back" onclick="closePickJar()">‹</div>
+      <div>
+        <div class="title">📈 追投已有罐子</div>
+        <div class="subtitle">挑一只你已经养着的罐子</div>
+      </div>
+    </div>
+    <div class="addjar-body">
+      <div class="addjar-tip">
+        <span class="at-icon">💡</span>
+        <span>追投是给已经相信的公司继续加码 — 长期持有同一家公司,通常比频繁换股更赚</span>
+      </div>
+      <div class="company-grid" id="pickjar-grid"></div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="addjar" onclick="closeAddJar(event)">
   <div class="addjar-modal" onclick="event.stopPropagation()">
     <div class="addjar-header">
@@ -3413,6 +3432,15 @@
         <div class="ne-info">
           <div class="ne-name">开个新罐子 <span class="ne-tag">推荐</span></div>
           <div class="ne-desc">从精选公司里挑一家,陪孩子一起决定</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+      <div class="next-action" onclick="openPickJar()">
+        <div class="ne-icon">📈</div>
+        <div class="ne-info">
+          <div class="ne-name">追投已有罐子</div>
+          <div class="ne-desc">挑一只你已经在养的罐子,再给它加点钱</div>
         </div>
         <div class="arrow">›</div>
       </div>
@@ -3516,6 +3544,31 @@ function renderCompanyGrid() {
     </div>
   `).join('');
 }
+function openPickJar() {
+  document.getElementById('invest').classList.remove('show');
+  const grid = document.getElementById('pickjar-grid');
+  grid.innerHTML = Object.entries(jarData).map(([key, j]) => `
+    <div class="company-card" onclick="pickExistingJar('${key}')">
+      <span class="c-emoji">${j.emoji}</span>
+      <div class="c-name">${j.name.replace('罐子','')}</div>
+      <div class="c-tag">现在 HK$ ${Math.round(j.value).toLocaleString('en-US')}</div>
+      <div class="c-reason">点一下 → 追投</div>
+    </div>
+  `).join('');
+  setTimeout(() => document.getElementById('pickjar').classList.add('show'), 200);
+}
+function closePickJar(e) {
+  if (e && e.target.id !== 'pickjar') return;
+  document.getElementById('pickjar').classList.remove('show');
+}
+function pickExistingJar(key) {
+  document.getElementById('pickjar').classList.remove('show');
+  setTimeout(() => {
+    openJar(key);
+    enterTradeMode('buy');
+  }, 250);
+}
+
 function openAddJar() {
   document.getElementById('invest').classList.remove('show');
   renderCompanyGrid();
