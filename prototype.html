@@ -660,6 +660,50 @@
   }
   .deposit-option .arrow { font-size: 18px; color: #b0b0b0; }
 
+  /* jar trade buttons */
+  .trade-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .trade-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .trade-btn:active { transform: scale(0.97); }
+  .trade-btn.buy {
+    background: linear-gradient(135deg, #ffe4ec, #ffd6e0);
+    color: #e84393;
+  }
+  .trade-btn.sell {
+    background: #f0f3f5;
+    color: #636e72;
+  }
+  .trade-btn .tb-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .trade-btn.buy .tb-icon { background: #ff6b6b; color: white; }
+  .trade-btn.sell .tb-icon { background: #b0b0b0; color: white; }
+  .trade-btn .tb-text { flex: 1; }
+  .trade-btn .tb-title { font-size: 12px; font-weight: 800; }
+  .trade-btn .tb-sub { font-size: 10px; opacity: 0.8; margin-top: 1px; }
+
   /* add new jar page */
   .addjar-modal {
     background: linear-gradient(180deg, #fff9e6 0%, #ffeaa7 100%);
@@ -2560,39 +2604,39 @@
 
   <div class="shelf">
     <div class="jars" id="jars-grid">
-      <div class="jar up-glow" onclick="openJar('apple')">
+      <div class="jar up-glow" data-key="apple" onclick="openJar('apple')">
         <span class="sparkle">✨</span>
         <span class="emoji">🍎</span>
         <div class="name">苹果</div>
         <div class="value">HK$ 892</div>
         <div class="chg up">▲ 2.1%</div>
       </div>
-      <div class="jar up-glow" onclick="openJar('disney')">
+      <div class="jar up-glow" data-key="disney" onclick="openJar('disney')">
         <span class="sparkle">✨</span>
         <span class="emoji">🏰</span>
         <div class="name">迪士尼</div>
         <div class="value">HK$ 640</div>
         <div class="chg up">▲ 1.3%</div>
       </div>
-      <div class="jar" onclick="openJar('nintendo')">
+      <div class="jar" data-key="nintendo" onclick="openJar('nintendo')">
         <span class="emoji">🎮</span>
         <div class="name">任天堂</div>
         <div class="value">HK$ 515</div>
         <div class="chg up">▲ 0.4%</div>
       </div>
-      <div class="jar down-glow" onclick="openJar('tesla')">
+      <div class="jar down-glow" data-key="tesla" onclick="openJar('tesla')">
         <span class="emoji">🚗</span>
         <div class="name">特斯拉</div>
         <div class="value">HK$ 420</div>
         <div class="chg down">▼ 0.8%</div>
       </div>
-      <div class="jar" onclick="openJar('mcd')">
+      <div class="jar" data-key="mcd" onclick="openJar('mcd')">
         <span class="emoji">🍔</span>
         <div class="name">麦当劳</div>
         <div class="value">HK$ 380</div>
         <div class="chg up">▲ 0.2%</div>
       </div>
-      <div class="empty-jar">＋</div>
+      <div class="empty-jar" onclick="openAddJar()" style="cursor:pointer;">＋</div>
     </div>
   </div>
 
@@ -2701,7 +2745,23 @@
       📖 <strong>你知道吗?</strong><br>
       苹果公司每卖出 10 台 iPhone,你的罐子就会多 0.002 元。全世界有超过 20 亿人在用它的产品,包括你爸爸妈妈的手机!
     </div>
-    <button class="close" onclick="closeJar()">知道啦 ✨</button>
+    <div class="trade-actions">
+      <button class="trade-btn buy" onclick="tradeJar('buy')">
+        <span class="tb-icon">＋</span>
+        <div class="tb-text">
+          <div class="tb-title">加点钱进去</div>
+          <div class="tb-sub">买入 HK$ 100</div>
+        </div>
+      </button>
+      <button class="trade-btn sell" onclick="tradeJar('sell')">
+        <span class="tb-icon">－</span>
+        <div class="tb-text">
+          <div class="tb-title">拿出来一点</div>
+          <div class="tb-sub">卖出 HK$ 100</div>
+        </div>
+      </button>
+    </div>
+    <button class="close" onclick="closeJar()" style="background:#f0f3f5;color:#636e72;">关闭</button>
   </div>
 </div>
 
@@ -3325,8 +3385,16 @@ function finalizeNewJar() {
 function addJarToShelf(c) {
   const grid = document.getElementById('jars-grid');
   const empty = grid.querySelector('.empty-jar');
+  jarData[c.key] = {
+    emoji: c.emoji, name: c.name + '罐子', sub: '今天刚开的新罐子 ✨',
+    value: 200, cost: 200, div: 0,
+    story: '📖 <strong>关于这家公司:</strong><br>' + c.reason
+  };
   const newJar = document.createElement('div');
   newJar.className = 'jar up-glow';
+  newJar.setAttribute('data-key', c.key);
+  newJar.setAttribute('onclick', `openJar('${c.key}')`);
+  newJar.style.cursor = 'pointer';
   newJar.innerHTML = `
     <span class="sparkle">✨</span>
     <span class="emoji">${c.emoji}</span>
@@ -3336,7 +3404,6 @@ function addJarToShelf(c) {
   `;
   if (empty) grid.insertBefore(newJar, empty);
   else grid.appendChild(newJar);
-  // remove this company from available pool
   const i = availableCompanies.findIndex(x => x.key === c.key);
   if (i >= 0) availableCompanies.splice(i, 1);
 }
@@ -3689,39 +3756,69 @@ function goToInvest() {
 }
 
 const jarData = {
-  apple: { emoji: '🍎', name: '苹果罐子', sub: '你从 2025年9月 开始养它',
-    value: 'HK$ 892.40', cost: 'HK$ 800.00', profit: '+HK$ 92.40', div: 'HK$ 4.20',
-    story: '📖 <strong>你知道吗?</strong><br>苹果公司每卖出 10 台 iPhone,你的罐子就会多 0.002 元。全世界有超过 20 亿人在用它的产品,包括你爸爸妈妈的手机!' },
-  disney: { emoji: '🏰', name: '迪士尼罐子', sub: '你从 2025年11月 开始养它',
-    value: 'HK$ 640.10', cost: 'HK$ 600.00', profit: '+HK$ 40.10', div: 'HK$ 2.80',
-    story: '📖 <strong>你知道吗?</strong><br>米奇老鼠、冰雪奇缘、漫威英雄都是迪士尼的!每次有人去迪士尼乐园玩,你的罐子都会开心地长大一点点 🎢' },
-  nintendo: { emoji: '🎮', name: '任天堂罐子', sub: '你从 2026年1月 开始养它',
-    value: 'HK$ 515.00', cost: 'HK$ 500.00', profit: '+HK$ 15.00', div: 'HK$ 0' ,
-    story: '📖 <strong>你知道吗?</strong><br>Switch 和马力欧都是它做的!任天堂已经 130 多岁啦,一开始是做扑克牌的,你信吗?' },
-  tesla: { emoji: '🚗', name: '特斯拉罐子', sub: '你从 2025年12月 开始养它',
-    value: 'HK$ 420.00', cost: 'HK$ 450.00', profit: '-HK$ 30.00', div: 'HK$ 0',
-    story: '📖 <strong>小财的话:</strong><br>今天它有点不开心,因为最近卖的车少了一些。但是股票会上上下下很正常,就像你考试也有好有坏 💪 长大了才看得清楚。' },
-  mcd: { emoji: '🍔', name: '麦当劳罐子', sub: '你从 2026年2月 开始养它',
-    value: 'HK$ 380.00', cost: 'HK$ 370.00', profit: '+HK$ 10.00', div: 'HK$ 1.50',
-    story: '📖 <strong>你知道吗?</strong><br>全世界每秒钟有 75 个汉堡被卖出去!每卖一个,你的罐子都在悄悄长大 🍟' },
+  apple:    { emoji:'🍎', name:'苹果罐子',   sub:'你从 2025年9月 开始养它',  value:892.40, cost:800,  div:4.20, story:'📖 <strong>你知道吗?</strong><br>苹果公司每卖出 10 台 iPhone,你的罐子就会多 0.002 元。全世界有超过 20 亿人在用它的产品,包括你爸爸妈妈的手机!' },
+  disney:   { emoji:'🏰', name:'迪士尼罐子', sub:'你从 2025年11月 开始养它', value:640.10, cost:600,  div:2.80, story:'📖 <strong>你知道吗?</strong><br>米奇老鼠、冰雪奇缘、漫威英雄都是迪士尼的!每次有人去迪士尼乐园玩,你的罐子都会开心地长大一点点 🎢' },
+  nintendo: { emoji:'🎮', name:'任天堂罐子', sub:'你从 2026年1月 开始养它',  value:515.00, cost:500,  div:0,    story:'📖 <strong>你知道吗?</strong><br>Switch 和马力欧都是它做的!任天堂已经 130 多岁啦,一开始是做扑克牌的,你信吗?' },
+  tesla:    { emoji:'🚗', name:'特斯拉罐子', sub:'你从 2025年12月 开始养它', value:420.00, cost:450,  div:0,    story:'📖 <strong>这只罐子的话:</strong><br>今天它有点不开心,因为最近卖的车少了一些。但是股票会上上下下很正常,就像你考试也有好有坏 💪 长大了才看得清楚。' },
+  mcd:      { emoji:'🍔', name:'麦当劳罐子', sub:'你从 2026年2月 开始养它',  value:380.00, cost:370,  div:1.50, story:'📖 <strong>你知道吗?</strong><br>全世界每秒钟有 75 个汉堡被卖出去!每卖一个,你的罐子都在悄悄长大 🍟' },
 };
+let currentJarKey = null;
 
-function openJar(key) {
-  const d = jarData[key];
+function fmtMoney(n) { return 'HK$ ' + n.toFixed(2); }
+function renderJarModal() {
+  const d = jarData[currentJarKey];
   document.getElementById('m-emoji').textContent = d.emoji;
   document.getElementById('m-name').textContent = d.name;
   document.getElementById('m-sub').textContent = d.sub;
-  document.getElementById('m-value').textContent = d.value;
-  document.getElementById('m-cost').textContent = d.cost;
+  document.getElementById('m-value').textContent = fmtMoney(d.value);
+  document.getElementById('m-cost').textContent = fmtMoney(d.cost);
+  const profit = d.value - d.cost;
   const p = document.getElementById('m-profit');
-  p.textContent = d.profit;
-  p.className = 'v ' + (d.profit.startsWith('-') ? 'down' : 'up');
-  document.getElementById('m-div').textContent = d.div;
+  p.textContent = (profit >= 0 ? '+' : '') + fmtMoney(profit).replace('HK$ ', 'HK$ ');
+  p.className = 'v ' + (profit < 0 ? 'down' : 'up');
+  document.getElementById('m-div').textContent = fmtMoney(d.div);
   document.getElementById('m-story').innerHTML = d.story;
+}
+function openJar(key) {
+  currentJarKey = key;
+  renderJarModal();
   document.getElementById('modal').classList.add('show');
 }
 function closeJar(e) {
   document.getElementById('modal').classList.remove('show');
+}
+function tradeJar(action) {
+  const d = jarData[currentJarKey];
+  if (!d) return;
+  const amount = 100;
+  if (action === 'sell' && d.value < amount) {
+    alert('罐子里的钱不够,试试小一点的金额');
+    return;
+  }
+  openPwd('HK$ ' + amount, () => {
+    if (action === 'buy') {
+      d.value += amount;
+      d.cost += amount;
+    } else {
+      d.value -= amount;
+      d.cost = Math.max(0, d.cost - amount);
+    }
+    renderJarModal();
+    // update shelf jar value display
+    const shelfJar = document.querySelector(`.jar[data-key="${currentJarKey}"] .value`);
+    if (shelfJar) shelfJar.textContent = 'HK$ ' + Math.round(d.value);
+    // toast
+    const t = document.createElement('div');
+    t.className = 'jar-toast';
+    t.innerHTML = `
+      <span class="jt-emoji">${action==='buy'?'💰':'💸'}</span>
+      <div class="jt-title">${action==='buy'?'已加入':'已卖出'} HK$ ${amount}</div>
+      <div class="jt-sub">${d.name} 现在 ${fmtMoney(d.value)}</div>
+    `;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.transition='opacity 0.4s'; t.style.opacity='0'; }, 1600);
+    setTimeout(() => t.remove(), 2100);
+  });
 }
 </script>
 </body>
