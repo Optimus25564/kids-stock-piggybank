@@ -3212,9 +3212,11 @@ function closeOneClick(e) {
   document.getElementById('oneclick').classList.remove('show');
 }
 function confirmOneClick() {
-  document.getElementById('oneclick').classList.remove('show');
-  document.getElementById('success-source').textContent = window.__ocBank || '银行入金';
-  setTimeout(() => document.getElementById('success').classList.add('show'), 250);
+  openPwd('HK$ 500', () => {
+    document.getElementById('oneclick').classList.remove('show');
+    document.getElementById('success-source').textContent = window.__ocBank || '银行入金';
+    setTimeout(() => document.getElementById('success').classList.add('show'), 250);
+  });
 }
 function closeSuccess(e) {
   if (e && e.target.id !== 'success') return;
