@@ -1,0 +1,3110 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小小股票储蓄罐</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(180deg, #ffeaa7 0%, #fab1a0 100%);
+    min-height: 100vh;
+    color: #2d3436;
+    user-select: none;
+  }
+  .phone {
+    max-width: 420px;
+    margin: 20px auto;
+    background: #fff7e6;
+    border-radius: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    overflow: hidden;
+    min-height: 860px;
+    position: relative;
+  }
+  .header {
+    padding: 24px 24px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .greet { font-size: 14px; color: #636e72; }
+  .greet strong { color: #2d3436; font-size: 16px; display: block; margin-top: 2px; }
+  .coin-badge {
+    background: #fdcb6e;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(253,203,110,0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .coin-badge:active { transform: scale(0.95); }
+  .total-card {
+    margin: 8px 20px 20px;
+    padding: 22px;
+    background: linear-gradient(135deg, #ff9a9e, #fecfef);
+    border-radius: 24px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(255,154,158,0.4);
+    position: relative;
+  }
+  .joint-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(6px);
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    margin-bottom: 10px;
+    width: fit-content;
+  }
+  .joint-bar .verified { font-size: 10px; }
+  .joint-bar .names { font-weight: 600; }
+  .total-label { font-size: 13px; opacity: 0.9; }
+  .total-value { font-size: 32px; font-weight: 800; margin: 4px 0; letter-spacing: -1px; }
+  .total-change { font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  .cash-row {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(255,255,255,0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cash-row .cash-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cash-row .coin-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .cash-row .cash-info .cash-label {
+    font-size: 10px;
+    opacity: 0.85;
+  }
+  .cash-row .cash-info .cash-value {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .cash-row .invest-now {
+    background: white;
+    color: #ff6b6b;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  .cash-row .invest-now:active { transform: scale(0.95); }
+  .deposit-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: white;
+    color: #ff6b6b;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 18px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .deposit-btn:active { transform: scale(0.95); }
+  .goal-card {
+    margin: -8px 20px 20px;
+    padding: 18px 20px;
+    background: white;
+    border-radius: 22px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .goal-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, #ffeaa7 0%, transparent 70%);
+    opacity: 0.6;
+  }
+  .goal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .goal-icon {
+    font-size: 36px;
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .goal-info { flex: 1; }
+  .goal-title {
+    font-size: 11px;
+    color: #95a5a6;
+    margin-bottom: 2px;
+  }
+  .goal-name {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .goal-edit {
+    font-size: 11px;
+    color: #fdcb6e;
+    background: #fff9e6;
+    padding: 4px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  .goal-progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .goal-current {
+    font-size: 20px;
+    font-weight: 800;
+    color: #2d3436;
+  }
+  .goal-current .of {
+    font-size: 12px;
+    color: #95a5a6;
+    font-weight: 500;
+  }
+  .goal-percent {
+    font-size: 14px;
+    font-weight: 700;
+    color: #00b894;
+  }
+  .goal-bar {
+    height: 12px;
+    background: #f0f3f5;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .goal-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fdcb6e 0%, #ff9a9e 50%, #fab1a0 100%);
+    border-radius: 6px;
+    position: relative;
+    width: 28%;
+    transition: width 0.6s ease;
+  }
+  .goal-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .goal-foot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #636e72;
+    position: relative;
+  }
+  .goal-foot .left { display: flex; align-items: center; gap: 4px; }
+  .goal-foot strong { color: #ff6b6b; }
+
+  /* footprint trail / niuniu raise */
+  .footprint-card {
+    margin: 0 20px 20px;
+    padding: 18px 18px 16px;
+    background: linear-gradient(135deg, #fff5d6 0%, #ffe0b2 50%, #ffccbc 100%);
+    border-radius: 22px;
+    box-shadow: 0 8px 24px rgba(255,154,0,0.15);
+    overflow: hidden;
+    position: relative;
+  }
+  .footprint-card::before {
+    content: '☁️';
+    position: absolute;
+    top: 8px; right: 14px;
+    font-size: 16px;
+    opacity: 0.5;
+  }
+  .footprint-card::after {
+    content: '🌱';
+    position: absolute;
+    bottom: 60px; left: 12px;
+    font-size: 12px;
+    opacity: 0.5;
+  }
+  .footprint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .footprint-title {
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .footprint-title .level {
+    background: white;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #00b894;
+    font-weight: 700;
+  }
+  .footprint-count {
+    font-size: 11px;
+    color: #636e72;
+  }
+  .footprint-stage {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    padding: 8px 0 6px;
+    position: relative;
+    min-height: 60px;
+  }
+  .character {
+    font-size: 48px;
+    line-height: 1;
+    margin-right: 6px;
+    animation: hop 1.8s ease-in-out infinite;
+    flex-shrink: 0;
+    z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(255,154,0,0.3));
+  }
+  @keyframes hop {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  .footprint-trail {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .footprint-trail::-webkit-scrollbar { display: none; }
+  .step {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .step .paw {
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.85;
+  }
+  .step .step-emoji {
+    font-size: 16px;
+    line-height: 1;
+  }
+  .step.recent .paw { animation: pawPop 0.5s; }
+  @keyframes pawPop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+  .next-stage {
+    flex-shrink: 0;
+    margin-left: 4px;
+    font-size: 11px;
+    color: #95a5a6;
+    text-align: center;
+    border-left: 1px dashed #b0d4e0;
+    padding-left: 8px;
+    line-height: 1.3;
+  }
+  .next-stage .ghost {
+    font-size: 26px;
+    opacity: 0.4;
+    filter: grayscale(0.5);
+    display: block;
+  }
+  /* graduation strip */
+  .graduation {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(255,107,107,0.3);
+    position: relative;
+  }
+  .grad-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .grad-icon {
+    font-size: 18px;
+  }
+  .grad-text {
+    flex: 1;
+    font-size: 12px;
+    color: #2d3436;
+    line-height: 1.4;
+  }
+  .grad-text strong { color: #e17055; }
+  .grad-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .grad-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fdcb6e, #ff6b6b, #e056fd);
+    border-radius: 4px;
+    width: 44%;
+    position: relative;
+  }
+  .grad-bar-fill::after {
+    content: '🐮';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+  }
+  .grad-marks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #95a5a6;
+  }
+  .up-arrow { display: inline-block; }
+  .shelf-title {
+    padding: 8px 24px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .shelf-title .hint { font-size: 12px; color: #636e72; font-weight: 400; }
+  .shelf {
+    margin: 0 20px 16px;
+    padding: 30px 16px 18px;
+    background: linear-gradient(180deg, #ffeaa7 0%, #ffd47a 100%);
+    border-radius: 24px;
+    position: relative;
+    box-shadow: inset 0 -6px 0 rgba(0,0,0,0.08);
+  }
+  .shelf::after {
+    content: '';
+    position: absolute;
+    left: 8px; right: 8px; bottom: 8px;
+    height: 6px;
+    background: #b8860b;
+    border-radius: 3px;
+    opacity: 0.5;
+  }
+  .jars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .jar {
+    background: white;
+    border-radius: 18px;
+    padding: 12px 6px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: relative;
+  }
+  .jar:hover, .jar:active { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+  .jar .emoji { font-size: 42px; line-height: 1; display: block; margin-bottom: 4px; animation: float 3s ease-in-out infinite; }
+  .jar:nth-child(2) .emoji { animation-delay: 0.3s; }
+  .jar:nth-child(3) .emoji { animation-delay: 0.6s; }
+  .jar:nth-child(4) .emoji { animation-delay: 0.9s; }
+  .jar:nth-child(5) .emoji { animation-delay: 1.2s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .jar .name { font-size: 11px; color: #636e72; margin-top: 2px; }
+  .jar .value { font-size: 13px; font-weight: 700; margin-top: 2px; }
+  .jar .chg { font-size: 10px; margin-top: 1px; }
+  .up { color: #00b894; }
+  .down { color: #e17055; }
+  .jar.up-glow { box-shadow: 0 0 0 2px #00b894, 0 4px 12px rgba(0,184,148,0.3); }
+  .jar.down-glow { box-shadow: 0 0 0 2px #ff7675, 0 4px 12px rgba(255,118,117,0.2); }
+  .jar .sparkle {
+    position: absolute;
+    top: 6px; right: 6px;
+    font-size: 12px;
+    animation: sparkle 1.5s infinite;
+  }
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  .empty-jar {
+    background: rgba(255,255,255,0.4);
+    border: 2px dashed #b8860b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    font-size: 32px;
+    color: #b8860b;
+    opacity: 0.6;
+  }
+  .ai-chat {
+    margin: 4px 20px 20px;
+    background: white;
+    border-radius: 24px;
+    padding: 16px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  }
+  .ai-chat .title { font-size: 13px; color: #636e72; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .ai-chat .msg {
+    background: #f0f3f5;
+    padding: 10px 14px;
+    border-radius: 16px 16px 16px 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .ai-chat .input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: #f0f3f5;
+    padding: 10px 14px;
+    border-radius: 20px;
+  }
+  .ai-chat .input-row .placeholder { flex: 1; font-size: 13px; color: #95a5a6; }
+  .ai-chat .mic { font-size: 18px; }
+  .bottom-tasks {
+    margin: 0 20px 24px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .bottom-tasks .left { font-size: 13px; }
+  .bottom-tasks .left strong { display: block; font-size: 15px; margin-bottom: 2px; }
+  .bottom-tasks button {
+    background: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #2d3436;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  /* modal */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 28px;
+    padding: 24px;
+    width: 88%;
+    max-width: 360px;
+    text-align: center;
+    animation: pop 0.3s;
+  }
+  @keyframes pop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal .big-emoji { font-size: 80px; display: block; margin-bottom: 8px; }
+  .modal h2 { font-size: 22px; margin-bottom: 4px; }
+  .modal .sub { font-size: 13px; color: #636e72; margin-bottom: 16px; }
+  .modal .stats {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+    text-align: left;
+  }
+  .modal .stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin: 4px 0;
+  }
+  .modal .stat-row .v { font-weight: 700; }
+  .modal .story {
+    font-size: 12px;
+    color: #636e72;
+    line-height: 1.6;
+    text-align: left;
+    background: #fff9e6;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  /* deposit */
+  .deposit-modal {
+    background: white;
+    border-radius: 28px 28px 0 0;
+    padding: 24px 22px 32px;
+    width: 100%;
+    max-width: 420px;
+    position: absolute;
+    bottom: 0;
+    animation: slideUp 0.3s;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .deposit-modal h2 { font-size: 20px; margin-bottom: 4px; }
+  .deposit-modal .sub { font-size: 12px; color: #95a5a6; margin-bottom: 6px; }
+  .parent-only {
+    background: #fff3cd;
+    color: #856404;
+    font-size: 11px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .deposit-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: 2px solid transparent;
+  }
+  .deposit-option:hover { background: #f0f3f5; border-color: #fdcb6e; }
+  .deposit-option:active { transform: scale(0.98); }
+  .deposit-option .icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .deposit-option .icon.futu { background: linear-gradient(135deg, #ffd93d, #ff9a3c); }
+  .deposit-option .icon.tianxing { background: linear-gradient(135deg, #6a89cc, #4a69bd); }
+  .deposit-option .icon.bank { background: linear-gradient(135deg, #78e08f, #38ada9); }
+  .deposit-option .info { flex: 1; }
+  .deposit-option .info .name { font-size: 14px; font-weight: 700; }
+  .deposit-option .info .desc { font-size: 11px; color: #95a5a6; margin-top: 2px; }
+  .deposit-option .info .badge {
+    display: inline-block;
+    background: #00b894;
+    color: white;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 6px;
+    margin-left: 4px;
+    font-weight: 600;
+  }
+  .deposit-option .arrow { font-size: 18px; color: #b0b0b0; }
+
+  /* invest center sub-page */
+  .invest-page {
+    background: linear-gradient(180deg, #fff7e6 0%, #ffeaa7 100%);
+    border-radius: 28px;
+    padding: 0;
+    width: 96%;
+    max-width: 400px;
+    max-height: 92vh;
+    overflow: hidden;
+    animation: pop 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+  .invest-page-header {
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    border-radius: 28px 28px 0 0;
+    border-bottom: 1px solid #f0f3f5;
+  }
+  .invest-page-header .back {
+    width: 32px; height: 32px;
+    background: #f0f3f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .invest-page-header .title { font-size: 17px; font-weight: 800; }
+  .invest-page-header .subtitle { font-size: 11px; color: #95a5a6; margin-top: 1px; }
+  .invest-body {
+    padding: 18px 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .invest-cash-card {
+    background: linear-gradient(135deg, #fdcb6e, #ff9a9e);
+    border-radius: 20px;
+    padding: 18px 20px;
+    color: white;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(253,203,110,0.4);
+  }
+  .invest-cash-card .label { font-size: 11px; opacity: 0.9; }
+  .invest-cash-card .value { font-size: 30px; font-weight: 800; margin: 4px 0; letter-spacing: -0.5px; }
+  .invest-cash-card .breakdown {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .invest-cash-card .chip {
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(6px);
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* transfer / one-click deposit pages */
+  .transfer-modal {
+    background: white;
+    border-radius: 28px;
+    width: 96%;
+    max-width: 400px;
+    max-height: 92vh;
+    overflow: hidden;
+    animation: pop 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+  .transfer-header {
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #f0f3f5;
+  }
+  .transfer-header .back {
+    width: 32px; height: 32px;
+    background: #f0f3f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .transfer-header .title { font-size: 17px; font-weight: 800; }
+  .transfer-header .subtitle { font-size: 11px; color: #95a5a6; margin-top: 1px; }
+  .transfer-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .account-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .account-box {
+    flex: 1;
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .account-box.source { background: linear-gradient(135deg, #fff5d6, #ffeaa7); }
+  .account-box.dest { background: linear-gradient(135deg, #ffe4ec, #ffd6e0); }
+  .account-box .a-icon {
+    font-size: 26px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .account-box .a-label {
+    font-size: 9px;
+    color: #95a5a6;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .account-box .a-name {
+    font-size: 12px;
+    font-weight: 800;
+    color: #2d3436;
+  }
+  .account-box .a-balance {
+    font-size: 10px;
+    color: #636e72;
+    margin-top: 4px;
+  }
+  .account-arrow {
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    color: #fdcb6e;
+  }
+  .amount-input-area {
+    background: #f8f9fa;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .amount-input-area .input-label {
+    font-size: 11px;
+    color: #95a5a6;
+    margin-bottom: 6px;
+  }
+  .amount-display {
+    font-size: 36px;
+    font-weight: 800;
+    color: #2d3436;
+    letter-spacing: -1px;
+  }
+  .amount-display .currency {
+    font-size: 16px;
+    color: #95a5a6;
+    margin-right: 4px;
+    font-weight: 600;
+  }
+  .quick-amounts {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .quick-btn {
+    background: white;
+    border: 1.5px solid #f0f3f5;
+    padding: 8px 14px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #636e72;
+    transition: all 0.2s;
+  }
+  .quick-btn:hover { border-color: #fdcb6e; color: #ff6b6b; }
+  .quick-btn.active {
+    background: #fdcb6e;
+    color: white;
+    border-color: #fdcb6e;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 4px;
+    font-size: 12px;
+    color: #636e72;
+    border-bottom: 1px solid #f0f3f5;
+  }
+  .info-row:last-of-type { border-bottom: none; }
+  .info-row .v { color: #2d3436; font-weight: 600; }
+  .info-row .v.green { color: #00b894; }
+  .auto-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #d4f4dd, #c8e6f5);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    margin-bottom: 14px;
+  }
+  .auto-toggle .at-icon { font-size: 22px; }
+  .auto-toggle .at-text { flex: 1; font-size: 12px; line-height: 1.4; }
+  .auto-toggle .at-text strong { color: #00b894; }
+  .auto-toggle .switch-mini {
+    width: 36px; height: 20px;
+    background: #00b894;
+    border-radius: 10px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .auto-toggle .switch-mini::after {
+    content: '';
+    position: absolute;
+    top: 2px; right: 2px;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+  }
+  .one-click-banner {
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .one-click-banner .ocb-icon { font-size: 22px; }
+  .one-click-banner .ocb-text { flex: 1; font-size: 12px; line-height: 1.4; color: #2d3436; }
+  .one-click-banner .ocb-text strong { color: #e17055; }
+  .confirm-cta {
+    background: linear-gradient(135deg, #ff6b6b, #ff9a9e);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255,107,107,0.35);
+    margin-top: 6px;
+  }
+  .confirm-cta:active { transform: scale(0.98); }
+  .secure-note {
+    text-align: center;
+    font-size: 10px;
+    color: #95a5a6;
+    margin-top: 10px;
+  }
+
+  /* deposit success */
+  .success-modal {
+    background: linear-gradient(180deg, #fff9e6 0%, #ffeaa7 60%, #fab1a0 100%);
+    border-radius: 28px;
+    padding: 28px 22px 24px;
+    width: 92%;
+    max-width: 380px;
+    max-height: 92vh;
+    overflow-y: auto;
+    text-align: center;
+    animation: pop 0.4s;
+    position: relative;
+  }
+  .success-modal .confetti {
+    position: absolute;
+    top: 12px; left: 0; right: 0;
+    text-align: center;
+    font-size: 18px;
+    letter-spacing: 8px;
+    animation: confettiFall 1.2s ease-out;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .success-coin {
+    font-size: 72px;
+    line-height: 1;
+    margin: 18px 0 6px;
+    display: inline-block;
+    animation: bounceIn 0.6s;
+  }
+  @keyframes bounceIn {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  .success-modal h2 { font-size: 22px; margin-bottom: 4px; }
+  .success-modal .amount {
+    font-size: 32px;
+    font-weight: 800;
+    color: #e17055;
+    margin: 8px 0;
+    letter-spacing: -0.5px;
+  }
+  .success-modal .from {
+    font-size: 12px;
+    color: #636e72;
+    margin-bottom: 16px;
+  }
+  .balance-flip {
+    background: white;
+    border-radius: 18px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  }
+  .balance-flip .label { font-size: 11px; color: #95a5a6; text-align: left; }
+  .balance-flip .old {
+    font-size: 13px;
+    color: #95a5a6;
+    text-decoration: line-through;
+  }
+  .balance-flip .new {
+    font-size: 18px;
+    font-weight: 800;
+    color: #2d3436;
+  }
+  .balance-flip .arrow-big { font-size: 18px; color: #00b894; }
+  .next-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    margin-bottom: 10px;
+    color: #2d3436;
+  }
+  .next-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    text-align: left;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .next-action:hover { border-color: #fdcb6e; transform: translateY(-2px); }
+  .next-action.featured {
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-color: #fdcb6e;
+  }
+  .next-action .ne-icon {
+    width: 40px; height: 40px;
+    background: #fff9e6;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .next-action.featured .ne-icon { background: white; }
+  .next-action .ne-info { flex: 1; }
+  .next-action .ne-name { font-size: 13px; font-weight: 700; }
+  .next-action .ne-desc { font-size: 11px; color: #95a5a6; margin-top: 2px; }
+  .next-action .ne-tag {
+    background: #ff6b6b;
+    color: white;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+  .pending-banner {
+    background: linear-gradient(135deg, #ffd6e0, #ffe4ec);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+  }
+  .pending-banner .pb-avatar {
+    width: 36px; height: 36px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .pending-banner .pb-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #2d3436;
+    flex: 1;
+  }
+  .pending-banner .pb-text strong { color: #e17055; }
+  .notify-toggle {
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 10px;
+    color: #2d3436;
+  }
+  .notify-toggle .switch {
+    width: 36px; height: 20px;
+    background: #00b894;
+    border-radius: 10px;
+    position: relative;
+  }
+  .notify-toggle .switch::after {
+    content: '';
+    position: absolute;
+    top: 2px; right: 2px;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  /* wishlist */
+  .wishlist-modal {
+    background: linear-gradient(180deg, #fff5f7 0%, #ffe0ec 100%);
+    border-radius: 28px;
+    padding: 24px 20px 20px;
+    width: 92%;
+    max-width: 380px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: pop 0.3s;
+  }
+  .wishlist-header {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .wishlist-header h2 { font-size: 20px; }
+  .wishlist-header .sub { font-size: 12px; color: #95a5a6; margin-top: 2px; }
+  .wishlist-current {
+    background: linear-gradient(135deg, #fff, #fff5f7);
+    border: 2px solid #ff9a9e;
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 14px;
+    position: relative;
+    box-shadow: 0 6px 18px rgba(255,107,107,0.15);
+  }
+  .wishlist-current .now-tag {
+    position: absolute;
+    top: -8px; left: 14px;
+    background: #ff6b6b;
+    color: white;
+    font-size: 9px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .wishlist-section-title {
+    font-size: 12px;
+    color: #95a5a6;
+    font-weight: 600;
+    margin: 10px 4px 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .wish {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .wish:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+  .wish .w-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  .wish.experience .w-icon { background: linear-gradient(135deg, #d4f4dd, #c8e6f5); }
+  .wish .w-info { flex: 1; min-width: 0; }
+  .wish .w-name {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .wish .w-price {
+    font-size: 11px;
+    color: #95a5a6;
+    margin-top: 2px;
+  }
+  .wish .w-mini-bar {
+    height: 4px;
+    background: #f0f3f5;
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .wish .w-mini-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fdcb6e, #ff9a9e);
+    border-radius: 2px;
+  }
+  .wish .w-percent {
+    font-size: 14px;
+    font-weight: 800;
+    color: #ff6b6b;
+    flex-shrink: 0;
+  }
+  .wish .w-note {
+    font-size: 10px;
+    color: #95a5a6;
+    margin-top: 3px;
+    font-style: italic;
+  }
+  .wish .heart-tag {
+    font-size: 10px;
+    background: #ffe0ec;
+    color: #e84393;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .add-wish {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px;
+    background: rgba(255,255,255,0.6);
+    border: 2px dashed #ff9a9e;
+    border-radius: 16px;
+    color: #ff6b6b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .add-wish:hover { background: white; }
+  .achieved-section { margin-top: 14px; }
+  .wish.achieved {
+    background: #f8f9fa;
+    opacity: 0.85;
+  }
+  .wish.achieved .w-icon { background: linear-gradient(135deg, #d4f4dd, #b8e8c4); }
+  .wish.achieved .w-percent { color: #00b894; font-size: 16px; }
+
+  /* onboarding */
+  .onboard-modal {
+    background: white;
+    border-radius: 28px;
+    padding: 28px 24px 24px;
+    width: 92%;
+    max-width: 360px;
+    animation: pop 0.4s;
+    text-align: center;
+  }
+  .onboard-modal .ob-emoji {
+    font-size: 56px;
+    line-height: 1;
+    display: inline-block;
+    animation: bounceIn 0.6s;
+    margin-bottom: 8px;
+  }
+  .onboard-modal h2 {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  .onboard-modal .ob-sub {
+    font-size: 12px;
+    color: #95a5a6;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .onboard-tip {
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 11px;
+    color: #856404;
+    line-height: 1.5;
+    margin-bottom: 18px;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .onboard-tip .tip-icon { font-size: 14px; flex-shrink: 0; }
+  .ob-field { margin-bottom: 12px; text-align: left; }
+  .ob-field .ob-label {
+    font-size: 11px;
+    color: #636e72;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .ob-field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #f0f3f5;
+    border-radius: 14px;
+    font-size: 14px;
+    background: #f8f9fa;
+    color: #2d3436;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+  }
+  .ob-field input:focus {
+    border-color: #fdcb6e;
+    background: white;
+  }
+  .ob-confirm {
+    width: 100%;
+    background: linear-gradient(135deg, #ff6b6b, #ff9a9e);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255,107,107,0.3);
+    margin-top: 6px;
+  }
+  .ob-confirm:active { transform: scale(0.98); }
+  .ob-error {
+    color: #e17055;
+    font-size: 11px;
+    margin-top: 6px;
+    text-align: left;
+    display: none;
+  }
+  .ob-error.show { display: block; }
+
+  /* 18-year graduation ceremony */
+  .ceremony-modal {
+    background: linear-gradient(180deg, #2c1810 0%, #4a2c1a 25%, #8b4513 50%, #d4a574 75%, #fff5d6 100%);
+    border-radius: 28px;
+    width: 96%;
+    max-width: 400px;
+    max-height: 94vh;
+    overflow-y: auto;
+    animation: pop 0.5s;
+    color: white;
+    position: relative;
+  }
+  .ceremony-modal::-webkit-scrollbar { display: none; }
+  .ceremony-stars {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 200px;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .ceremony-stars span {
+    position: absolute;
+    color: #fff;
+    font-size: 12px;
+    animation: twinkle 2s infinite;
+  }
+  .ceremony-stars .s1 { top: 20px; left: 30px; animation-delay: 0s; }
+  .ceremony-stars .s2 { top: 50px; left: 80px; font-size: 8px; animation-delay: 0.5s; }
+  .ceremony-stars .s3 { top: 30px; right: 50px; font-size: 14px; animation-delay: 1s; }
+  .ceremony-stars .s4 { top: 80px; right: 30px; animation-delay: 1.5s; }
+  .ceremony-stars .s5 { top: 100px; left: 50px; font-size: 10px; animation-delay: 0.8s; }
+  .ceremony-stars .s6 { top: 130px; right: 80px; font-size: 11px; animation-delay: 0.3s; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.3); }
+  }
+  .ceremony-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    color: white;
+  }
+  .ceremony-hero {
+    text-align: center;
+    padding: 50px 20px 24px;
+    position: relative;
+  }
+  .ceremony-cap {
+    font-size: 72px;
+    line-height: 1;
+    margin-bottom: 12px;
+    display: inline-block;
+    animation: bounceIn 0.8s;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+  }
+  .ceremony-headline {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .ceremony-subhead {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+  .ceremony-date {
+    font-size: 11px;
+    opacity: 0.7;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    padding: 4px 12px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+  .ceremony-niuniu {
+    text-align: center;
+    margin: 14px 0 24px;
+    position: relative;
+  }
+  .ceremony-niuniu .grown-niuniu {
+    font-size: 96px;
+    line-height: 1;
+    display: inline-block;
+    animation: hop 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 12px 24px rgba(255,154,0,0.6));
+  }
+  .ceremony-niuniu .crown {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    animation: float 3s ease-in-out infinite;
+  }
+  .ceremony-niuniu .niu-name {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #fff5d6;
+    font-weight: 700;
+  }
+
+  .ceremony-body {
+    background: linear-gradient(180deg, transparent 0%, #fff5d6 8%, #fff9e6 100%);
+    padding: 40px 20px 24px;
+    border-radius: 0 0 28px 28px;
+    margin-top: -20px;
+    color: #2d3436;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stat-tile {
+    background: white;
+    border-radius: 16px;
+    padding: 14px 12px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  }
+  .stat-tile .st-label { font-size: 10px; color: #95a5a6; }
+  .stat-tile .st-value { font-size: 18px; font-weight: 800; color: #2d3436; margin-top: 2px; }
+  .stat-tile .st-sub { font-size: 9px; color: #95a5a6; margin-top: 1px; }
+  .stat-tile.highlight { background: linear-gradient(135deg, #fff5d6, #ffeaa7); }
+  .stat-tile.highlight .st-value { color: #e17055; font-size: 22px; }
+
+  .letter-card {
+    background: linear-gradient(135deg, #fff 0%, #fff9e6 100%);
+    border: 2px solid #fdcb6e;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(253,203,110,0.25);
+    position: relative;
+  }
+  .letter-card::before {
+    content: '💌';
+    position: absolute;
+    top: -14px;
+    left: 18px;
+    background: white;
+    padding: 0 8px;
+    font-size: 22px;
+  }
+  .letter-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    margin-top: 4px;
+  }
+  .letter-header .avatar {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, #ffd6a5, #ffb88c);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .letter-header .letter-from { font-size: 13px; font-weight: 800; }
+  .letter-header .letter-when { font-size: 10px; color: #95a5a6; margin-top: 1px; }
+  .letter-audio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff5d6;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .letter-audio .play-btn {
+    width: 32px; height: 32px;
+    background: #fdcb6e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .letter-audio .wave {
+    flex: 1;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .letter-audio .wave span {
+    flex: 1;
+    background: #fdcb6e;
+    border-radius: 2px;
+    opacity: 0.6;
+  }
+  .letter-audio .wave span:nth-child(1) { height: 30%; }
+  .letter-audio .wave span:nth-child(2) { height: 60%; }
+  .letter-audio .wave span:nth-child(3) { height: 80%; }
+  .letter-audio .wave span:nth-child(4) { height: 100%; }
+  .letter-audio .wave span:nth-child(5) { height: 70%; }
+  .letter-audio .wave span:nth-child(6) { height: 50%; }
+  .letter-audio .wave span:nth-child(7) { height: 90%; }
+  .letter-audio .wave span:nth-child(8) { height: 60%; }
+  .letter-audio .wave span:nth-child(9) { height: 40%; }
+  .letter-audio .wave span:nth-child(10) { height: 70%; }
+  .letter-audio .wave span:nth-child(11) { height: 50%; }
+  .letter-audio .wave span:nth-child(12) { height: 30%; }
+  .letter-audio .duration { font-size: 11px; color: #95a5a6; }
+  .letter-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #2d3436;
+    background: #fff9e6;
+    padding: 14px;
+    border-radius: 12px;
+    font-style: italic;
+    position: relative;
+  }
+  .letter-text::before {
+    content: '"';
+    font-size: 32px;
+    color: #fdcb6e;
+    line-height: 0.5;
+    vertical-align: -10px;
+    margin-right: 2px;
+  }
+  .letter-sign {
+    text-align: right;
+    font-size: 12px;
+    color: #636e72;
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  .first-trade-card {
+    background: white;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .first-trade-card .ft-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #fff5d6, #ffeaa7);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .first-trade-card .ft-info { flex: 1; }
+  .first-trade-card .ft-label { font-size: 10px; color: #95a5a6; font-weight: 700; }
+  .first-trade-card .ft-name { font-size: 14px; font-weight: 800; margin: 2px 0; }
+  .first-trade-card .ft-quote { font-size: 11px; color: #636e72; font-style: italic; }
+
+  .ceremony-cta {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff9a9e 50%, #fdcb6e 100%);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 18px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+  .ceremony-cta:active { transform: scale(0.98); }
+  .ceremony-secondary {
+    text-align: center;
+    font-size: 12px;
+    color: #95a5a6;
+    margin-top: 14px;
+    cursor: pointer;
+  }
+  .ceremony-secondary u { text-decoration-color: #fdcb6e; }
+
+  /* share card */
+  .share-modal {
+    width: 92%;
+    max-width: 360px;
+    animation: pop 0.4s;
+  }
+  .share-card {
+    background: linear-gradient(180deg, #2c1810 0%, #4a2c1a 30%, #8b4513 55%, #d4a574 80%, #fff5d6 100%);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .share-card-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 200px;
+    pointer-events: none;
+  }
+  .share-content {
+    position: relative;
+    padding: 24px 22px 22px;
+    text-align: center;
+    color: white;
+  }
+  .share-brand {
+    font-size: 11px;
+    opacity: 0.85;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    padding: 5px 12px;
+    border-radius: 12px;
+    display: inline-block;
+  }
+  .share-niuniu {
+    font-size: 88px;
+    line-height: 1;
+    margin: 8px 0 6px;
+    filter: drop-shadow(0 12px 24px rgba(255,154,0,0.6));
+    display: block;
+  }
+  .share-headline {
+    font-size: 26px;
+    font-weight: 900;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    margin-bottom: 4px;
+  }
+  .share-tag {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-bottom: 18px;
+  }
+  .share-stats {
+    background: rgba(255,255,255,0.95);
+    color: #2d3436;
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .share-stats .ss-row {
+    flex: 1;
+    text-align: center;
+  }
+  .share-stats .ss-num {
+    font-size: 20px;
+    font-weight: 900;
+    color: #2d3436;
+    letter-spacing: -0.5px;
+  }
+  .share-stats .ss-num.green { color: #00b894; }
+  .share-stats .ss-label {
+    font-size: 10px;
+    color: #95a5a6;
+    margin-top: 2px;
+  }
+  .share-stats .ss-divider {
+    width: 1px;
+    height: 36px;
+    background: #f0f3f5;
+  }
+  .share-quote {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 13px;
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .share-quote small {
+    font-size: 10px;
+    opacity: 0.7;
+    font-style: normal;
+  }
+  .share-foot {
+    background: rgba(255,255,255,0.95);
+    color: #2d3436;
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
+  .share-foot .share-qr {
+    width: 44px; height: 44px;
+    background: #2d3436;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .share-foot .share-foot-text { flex: 1; font-size: 12px; font-weight: 700; }
+  .share-foot .share-foot-text .small { font-size: 9px; color: #95a5a6; font-weight: 400; margin-top: 1px; }
+
+  .share-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .share-btn {
+    background: white;
+    border-radius: 14px;
+    padding: 12px 6px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #2d3436;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+  }
+  .share-btn:active { transform: scale(0.95); }
+  .share-btn span {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
+  /* story timeline */
+  .story-section {
+    margin: 0 20px 24px;
+    background: linear-gradient(180deg, #fff9e6 0%, #fff5f7 100%);
+    border-radius: 24px;
+    padding: 22px 20px 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  .story-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .story-subtitle {
+    font-size: 11px;
+    color: #95a5a6;
+    margin-bottom: 18px;
+  }
+  .timeline {
+    position: relative;
+    padding-left: 36px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 13px;
+    top: 8px;
+    bottom: 60px;
+    width: 2px;
+    background: linear-gradient(180deg, #fdcb6e 0%, #ff9a9e 60%, #e0e0e0 60%, #e0e0e0 100%);
+    border-radius: 2px;
+  }
+  .milestone {
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .milestone .dot {
+    position: absolute;
+    left: -30px;
+    top: 4px;
+    width: 28px;
+    height: 28px;
+    background: white;
+    border: 2px solid #fdcb6e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 3px 8px rgba(253,203,110,0.4);
+    z-index: 2;
+  }
+  .milestone.locked .dot {
+    background: #f0f3f5;
+    border-color: #d0d4d8;
+    box-shadow: none;
+  }
+  .milestone .date {
+    font-size: 10px;
+    color: #95a5a6;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .milestone .m-card {
+    background: white;
+    border-radius: 14px;
+    padding: 10px 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  }
+  .milestone .m-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .milestone .m-quote {
+    font-size: 11px;
+    color: #636e72;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .milestone.locked .m-card {
+    background: #f8f9fa;
+    box-shadow: none;
+  }
+  .milestone.locked .m-title { color: #b0b0b0; }
+  .milestone.locked .m-quote { color: #c0c0c0; }
+  .milestone.now .dot {
+    background: #ff6b6b;
+    border-color: #ff6b6b;
+    color: white;
+    animation: nowPulse 2s infinite;
+  }
+  @keyframes nowPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,107,0.6); }
+    50% { box-shadow: 0 0 0 8px rgba(255,107,107,0); }
+  }
+  .milestone.now .m-card {
+    background: linear-gradient(135deg, #ffe4ec, #ffd6e0);
+  }
+  .milestone.now .m-title { color: #e84393; }
+
+  /* graduation final card */
+  .graduation-card {
+    position: relative;
+    margin-top: 8px;
+    margin-left: -36px;
+    background: linear-gradient(135deg, #fff5d6 0%, #ffeaa7 50%, #ffd6a5 100%);
+    border: 2px solid #fdcb6e;
+    border-radius: 20px;
+    padding: 18px 16px;
+    box-shadow: 0 10px 30px rgba(253,203,110,0.4);
+    overflow: hidden;
+    animation: gradGlow 3s ease-in-out infinite;
+  }
+  @keyframes gradGlow {
+    0%, 100% { box-shadow: 0 10px 30px rgba(253,203,110,0.4); }
+    50% { box-shadow: 0 10px 40px rgba(253,203,110,0.7), 0 0 0 4px rgba(253,203,110,0.15); }
+  }
+  .graduation-card::before {
+    content: '✨';
+    position: absolute;
+    top: 8px; left: 12px;
+    font-size: 14px;
+    animation: sparkle 1.8s infinite;
+  }
+  .graduation-card::after {
+    content: '✨';
+    position: absolute;
+    bottom: 14px; right: 14px;
+    font-size: 12px;
+    animation: sparkle 2s infinite 0.6s;
+  }
+  .grad-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .grad-top .grad-emoji {
+    font-size: 38px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 8px rgba(255,154,0,0.4));
+  }
+  .grad-top .grad-info { flex: 1; }
+  .grad-top .grad-when {
+    font-size: 10px;
+    color: #b8860b;
+    font-weight: 700;
+  }
+  .grad-top .grad-headline {
+    font-size: 15px;
+    font-weight: 800;
+    color: #2d3436;
+    margin-top: 2px;
+  }
+  .grad-body {
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #2d3436;
+  }
+  .grad-body strong { color: #e17055; }
+  .grad-countdown {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 10px;
+    color: #636e72;
+  }
+  .grad-countdown strong { color: #e17055; font-size: 13px; }
+  /* album */
+  .album-modal {
+    background: linear-gradient(180deg, #fff9e6 0%, #ffeaa7 100%);
+    border-radius: 28px;
+    padding: 22px 18px;
+    width: 92%;
+    max-width: 380px;
+    max-height: 88vh;
+    overflow-y: auto;
+    animation: pop 0.3s;
+  }
+  .album-header {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .album-header h2 { font-size: 20px; }
+  .album-header .sub { font-size: 12px; color: #636e72; margin-top: 2px; }
+  .album-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .card {
+    aspect-ratio: 3/4;
+    background: white;
+    border-radius: 12px;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .card:active { transform: scale(0.95); }
+  .card.unlocked { background: linear-gradient(160deg, #fff 0%, #fff5d6 100%); }
+  .card.locked {
+    background: #e8e8e8;
+    color: #b0b0b0;
+  }
+  .card.locked .card-emoji { filter: grayscale(1); opacity: 0.4; }
+  .card .card-emoji { font-size: 32px; line-height: 1; }
+  .card .card-name { font-size: 10px; margin-top: 4px; font-weight: 600; }
+  .card .card-pages { font-size: 9px; color: #95a5a6; margin-top: 2px; }
+  .card .lock-icon {
+    position: absolute;
+    top: 4px; right: 4px;
+    font-size: 12px;
+  }
+  .card .new-badge {
+    position: absolute;
+    top: -4px; right: -4px;
+    background: #ff7675;
+    color: white;
+    font-size: 9px;
+    padding: 2px 5px;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+  .album-tip {
+    background: rgba(255,255,255,0.7);
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #636e72;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  /* card detail */
+  .card-detail {
+    background: white;
+    border-radius: 24px;
+    padding: 22px;
+    width: 88%;
+    max-width: 340px;
+    text-align: center;
+    animation: pop 0.3s;
+  }
+  .card-detail .big { font-size: 64px; }
+  .card-detail h3 { font-size: 20px; margin: 6px 0 2px; }
+  .card-detail .tag { font-size: 11px; color: #95a5a6; margin-bottom: 14px; }
+  .card-detail .pages {
+    background: #fff9e6;
+    border-radius: 14px;
+    padding: 14px;
+    text-align: left;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .card-detail .page-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 6px 0;
+  }
+  .card-detail .page-item .check { font-size: 14px; }
+  .card-detail .page-item.locked { color: #b0b0b0; }
+  .card-detail .progress-bar {
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .card-detail .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fdcb6e, #ff9a9e);
+    border-radius: 3px;
+  }
+  .modal button.close {
+    background: #fdcb6e;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="header">
+    <div class="greet">
+      欢迎回来
+      <strong id="header-title">小宇的股票储蓄罐 🏠</strong>
+    </div>
+    <div class="coin-badge" onclick="openAlbum()">📖 卡册 5/12</div>
+  </div>
+
+  <div class="total-card">
+    <div class="joint-bar">
+      <span class="verified">✅</span>
+      <span class="names" id="joint-names">爸爸 &amp; 小宇</span>
+      <span style="opacity:0.8;">· 联名账户</span>
+    </div>
+    <button class="deposit-btn" onclick="openDeposit()">+ 入金</button>
+    <div class="total-label">我的罐子总值</div>
+    <div class="total-value">HK$ 2,847.60</div>
+    <div class="total-change"><span class="up-arrow">▲</span> HK$ 42.30 今天 (+1.51%)</div>
+    <div class="cash-row">
+      <div class="cash-left">
+        <div class="coin-icon">🪙</div>
+        <div class="cash-info">
+          <div class="cash-label">零花钱 · 还没投资</div>
+          <div class="cash-value">HK$ 500.00</div>
+        </div>
+      </div>
+      <button class="invest-now" onclick="openInvest()">去投资 →</button>
+    </div>
+  </div>
+
+  <div class="goal-card">
+    <div class="goal-header">
+      <div class="goal-icon" id="goal-icon">📱</div>
+      <div class="goal-info">
+        <div class="goal-title">我的小目标</div>
+        <div class="goal-name" id="goal-name">攒一台 iPhone 17</div>
+      </div>
+      <div class="goal-edit" onclick="openWishlist()">心愿单 →</div>
+    </div>
+    <div class="goal-progress-row">
+      <div class="goal-current">HK$ 2,847 <span class="of">/ <span id="goal-target">10,000</span></span></div>
+      <div class="goal-percent" id="goal-percent">28%</div>
+    </div>
+    <div class="goal-bar">
+      <div class="goal-bar-fill" id="goal-bar-fill" style="width:28%"></div>
+    </div>
+    <div class="goal-foot">
+      <div class="left">💪 还差 <strong style="margin:0 3px;" id="goal-remaining">HK$ 7,153</strong></div>
+    </div>
+  </div>
+
+  <div class="shelf-title">
+    我的罐子架
+    <span class="hint">点一点看看它们 👆</span>
+  </div>
+
+  <div class="shelf">
+    <div class="jars">
+      <div class="jar up-glow" onclick="openJar('apple')">
+        <span class="sparkle">✨</span>
+        <span class="emoji">🍎</span>
+        <div class="name">苹果</div>
+        <div class="value">HK$ 892</div>
+        <div class="chg up">▲ 2.1%</div>
+      </div>
+      <div class="jar up-glow" onclick="openJar('disney')">
+        <span class="sparkle">✨</span>
+        <span class="emoji">🏰</span>
+        <div class="name">迪士尼</div>
+        <div class="value">HK$ 640</div>
+        <div class="chg up">▲ 1.3%</div>
+      </div>
+      <div class="jar" onclick="openJar('nintendo')">
+        <span class="emoji">🎮</span>
+        <div class="name">任天堂</div>
+        <div class="value">HK$ 515</div>
+        <div class="chg up">▲ 0.4%</div>
+      </div>
+      <div class="jar down-glow" onclick="openJar('tesla')">
+        <span class="emoji">🚗</span>
+        <div class="name">特斯拉</div>
+        <div class="value">HK$ 420</div>
+        <div class="chg down">▼ 0.8%</div>
+      </div>
+      <div class="jar" onclick="openJar('mcd')">
+        <span class="emoji">🍔</span>
+        <div class="name">麦当劳</div>
+        <div class="value">HK$ 380</div>
+        <div class="chg up">▲ 0.2%</div>
+      </div>
+      <div class="empty-jar">＋</div>
+    </div>
+  </div>
+
+  <div class="ai-chat">
+    <div class="title">💬 和小财说说话</div>
+    <div class="msg">
+      你今天多了 HK$42！🎉 苹果罐子涨得最多,是因为新手机要发布啦。想知道为什么吗?
+    </div>
+    <div class="input-row">
+      <div class="placeholder">我想买任天堂,因为...</div>
+      <span class="mic">🎤</span>
+    </div>
+  </div>
+
+  <div class="story-section">
+    <div class="story-title">🌈 我的成长故事集</div>
+    <div class="story-subtitle">每一个小瞬间,长大后都会变成回忆</div>
+
+    <div class="timeline">
+      <div class="milestone">
+        <div class="dot">🎂</div>
+        <div class="date">2025年8月12日</div>
+        <div class="m-card">
+          <div class="m-title">开户那天</div>
+          <div class="m-quote">"和爸爸一起开了人生第一个储蓄罐 🐮"</div>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="dot">🍎</div>
+        <div class="date">2025年9月3日</div>
+        <div class="m-card">
+          <div class="m-title">第一笔投资</div>
+          <div class="m-quote">"我想买苹果,因为爸爸的 iPhone 是苹果做的"</div>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="dot">🌟</div>
+        <div class="date">2025年11月15日</div>
+        <div class="m-card">
+          <div class="m-title">第一次收到分红</div>
+          <div class="m-quote">"苹果给了你 HK$0.80 — 你的第一笔被动收入!"</div>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="dot">📖</div>
+        <div class="date">2025年12月20日</div>
+        <div class="m-card">
+          <div class="m-title">集齐第一张金卡</div>
+          <div class="m-quote">"迪士尼故事册全部解锁,你成了小小迪士尼专家 🏰"</div>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="dot">💪</div>
+        <div class="date">2026年1月8日</div>
+        <div class="m-card">
+          <div class="m-title">第一次经历下跌</div>
+          <div class="m-quote">"特斯拉跌了 10%,你没有卖,你说'反正我喜欢它' 💛"</div>
+        </div>
+      </div>
+
+      <div class="milestone now">
+        <div class="dot">🐮</div>
+        <div class="date">2026年4月13日 · 现在</div>
+        <div class="m-card">
+          <div class="m-title">8 岁的你 · 5 个罐子 · HK$ 2,847</div>
+          <div class="m-quote">"今天的你,正在攒一台 iPhone 17 📱"</div>
+        </div>
+      </div>
+
+      <div class="milestone locked">
+        <div class="dot">🔒</div>
+        <div class="date">未来某一天</div>
+        <div class="m-card">
+          <div class="m-title">还有 10 年的故事等你</div>
+          <div class="m-quote">第一次定投、第一次分散投资、第一次大涨...</div>
+        </div>
+      </div>
+
+      <div class="graduation-card" onclick="openCeremony()" style="cursor:pointer;">
+        <div class="grad-top">
+          <div class="grad-emoji">🎓</div>
+          <div class="grad-info">
+            <div class="grad-when">2036 年 8 月 12 日 · 18 岁生日</div>
+            <div class="grad-headline">你的专属 Futu 牛牛号</div>
+          </div>
+        </div>
+        <div class="grad-body">
+          那一天,所有罐子里的资产会自动转到 <strong>你自己名下的 Futu 牛牛号</strong>。
+          这本故事集,会变成你人生第一份投资履历 📖
+        </div>
+        <div class="grad-countdown">
+          <span>距离毕业还有 <strong>10 年 4 个月</strong></span>
+          <span>已写下 <strong>6 个故事</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-bg" id="modal" onclick="closeJar(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <span class="big-emoji" id="m-emoji">🍎</span>
+    <h2 id="m-name">苹果罐子</h2>
+    <div class="sub" id="m-sub">你从 2025年9月 开始养它</div>
+    <div class="stats">
+      <div class="stat-row"><span>现在值</span><span class="v" id="m-value">HK$ 892.40</span></div>
+      <div class="stat-row"><span>你总共投入</span><span class="v" id="m-cost">HK$ 800.00</span></div>
+      <div class="stat-row"><span>赚了</span><span class="v up" id="m-profit">+HK$ 92.40</span></div>
+      <div class="stat-row"><span>收到的分红</span><span class="v" id="m-div">HK$ 4.20</span></div>
+    </div>
+    <div class="story" id="m-story">
+      📖 <strong>你知道吗?</strong><br>
+      苹果公司每卖出 10 台 iPhone,你的罐子就会多 0.002 元。全世界有超过 20 亿人在用它的产品,包括你爸爸妈妈的手机!
+    </div>
+    <button class="close" onclick="closeJar()">知道啦 ✨</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="deposit" onclick="closeDeposit(event)" style="align-items:flex-end;">
+  <div class="deposit-modal" onclick="event.stopPropagation()">
+    <h2>给小宇的罐子加点料 💰</h2>
+    <div class="sub">联名账户:爸爸 ✅ &amp; 小宇 ✅</div>
+    <div class="parent-only">🔒 只有家长可以入金,孩子端看不到这里</div>
+
+    <div class="deposit-option" onclick="openTransfer()">
+      <div class="icon futu">🐮</div>
+      <div class="info">
+        <div class="name">从我的牛牛号调拨 <span class="badge">最快</span></div>
+        <div class="desc">从爸爸的 Futu 账户秒到账,免手续费</div>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+
+    <div class="deposit-option" onclick="openOneClick('天星银行')">
+      <div class="icon tianxing">⭐</div>
+      <div class="info">
+        <div class="name">天星银行一键入金</div>
+        <div class="desc">绑定后可设置每月自动定投</div>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+
+    <div class="deposit-option" onclick="openOneClick('FPS 转数快')">
+      <div class="icon bank">🏦</div>
+      <div class="info">
+        <div class="name">其他银行转账 / FPS 转数快</div>
+        <div class="desc">支持汇丰、恒生、中银等,1-2 小时到账</div>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+
+    <button class="close" onclick="closeDeposit()" style="display:block;margin:16px auto 0;background:#f0f3f5;color:#636e72;">取消</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="wishlist" onclick="closeWishlist(event)">
+  <div class="wishlist-modal" onclick="event.stopPropagation()">
+    <div class="wishlist-header">
+      <h2>💖 小宇的心愿单</h2>
+      <div class="sub">点一下任意心愿 · 切换成现在在攒的目标</div>
+    </div>
+    <div id="wishlist-content"></div>
+    <button class="close" onclick="closeWishlist()" style="display:block;margin:16px auto 0;">关上心愿单</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="onboard">
+  <div class="onboard-modal" onclick="event.stopPropagation()">
+    <div class="ob-emoji">🐮</div>
+    <h2>欢迎来到小小股票储蓄罐</h2>
+    <div class="ob-sub">绑定家长牛牛号 · 开启亲子投资之旅</div>
+
+    <div class="onboard-tip">
+      <span class="tip-icon">💡</span>
+      <span>输入家长牛牛号后,会自动关联对应的亲子账号 — 孩子端的所有操作都在家长的监管下进行。</span>
+    </div>
+
+    <div class="ob-field">
+      <label class="ob-label">家长牛牛号</label>
+      <input id="ob-account" type="text" placeholder="请输入 Futu 牛牛账号" autocomplete="off">
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">登录密码</label>
+      <input id="ob-password" type="password" placeholder="默认密码 8888" autocomplete="off">
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">孩子的名字</label>
+      <input id="ob-childname" type="text" placeholder="例如:小宇" autocomplete="off">
+    </div>
+
+    <div class="ob-error" id="ob-error">请填写所有信息</div>
+
+    <button class="ob-confirm" onclick="confirmOnboard()">确认绑定 · 开启储蓄罐 →</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="ceremony" onclick="closeCeremony(event)">
+  <div class="ceremony-modal" onclick="event.stopPropagation()">
+    <div class="ceremony-stars">
+      <span class="s1">✨</span>
+      <span class="s2">⭐</span>
+      <span class="s3">✨</span>
+      <span class="s4">⭐</span>
+      <span class="s5">✨</span>
+      <span class="s6">⭐</span>
+    </div>
+    <div class="ceremony-close" onclick="closeCeremony()">×</div>
+
+    <div class="ceremony-hero">
+      <div class="ceremony-cap">🎓</div>
+      <div class="ceremony-headline">小宇,你 18 岁啦!</div>
+      <div class="ceremony-subhead">牛牛陪你走了 10 年 4 个月</div>
+      <div class="ceremony-date">2036 年 8 月 12 日</div>
+    </div>
+
+    <div class="ceremony-niuniu">
+      <span class="crown">👑</span>
+      <span class="grown-niuniu">🐂</span>
+      <div class="niu-name">"大牛先生" · 满级 Lv.10</div>
+    </div>
+
+    <div class="ceremony-body">
+      <div class="stats-grid">
+        <div class="stat-tile highlight">
+          <div class="st-label">当前总值</div>
+          <div class="st-value">HK$ 86,420</div>
+          <div class="st-sub">总收益 +186%</div>
+        </div>
+        <div class="stat-tile">
+          <div class="st-label">总投入</div>
+          <div class="st-value">HK$ 30,200</div>
+          <div class="st-sub">10 年累计</div>
+        </div>
+        <div class="stat-tile">
+          <div class="st-label">陪你走过</div>
+          <div class="st-value">3,776 天</div>
+          <div class="st-sub">从 8 岁到 18 岁</div>
+        </div>
+        <div class="stat-tile">
+          <div class="st-label">写下故事</div>
+          <div class="st-value">47 个</div>
+          <div class="st-sub">收藏卡 12/12 ✨</div>
+        </div>
+      </div>
+
+      <div class="letter-card">
+        <div class="letter-header">
+          <div class="avatar">👨</div>
+          <div>
+            <div class="letter-from">爸爸的话</div>
+            <div class="letter-when">2025 年 8 月 12 日 · 你 8 岁开户那天录的</div>
+          </div>
+        </div>
+
+        <div class="letter-audio">
+          <div class="play-btn">▶</div>
+          <div class="wave">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="duration">1:48</div>
+        </div>
+
+        <div class="letter-text">
+          小宇,如果你正在看到这条消息,说明你已经 18 岁了,而爸爸第一次写这封信的时候,你才刚刚 8 岁。<br><br>
+          那天你拉着我的手,问我什么是"股票"。我没办法用一句话告诉你,所以我们一起开了这个储蓄罐。爸爸希望你长大后明白:**钱不是用来囤的,是用来支持你相信的事的。**<br><br>
+          这十年里你一定经历过很多次涨和跌。如果你坚持到了今天,爸爸为你骄傲。从今天开始,这个账户就是你自己的了。你想怎么用,都可以 — 但记得那个 8 岁的你,曾经说过:<br>
+          <strong>"我想用它给妈妈拍照片。"</strong>
+        </div>
+        <div class="letter-sign">— 爸爸,2025.8.12</div>
+      </div>
+
+      <div class="first-trade-card">
+        <div class="ft-icon">🍎</div>
+        <div class="ft-info">
+          <div class="ft-label">你的第一笔投资</div>
+          <div class="ft-name">苹果 · 2025年9月3日</div>
+          <div class="ft-quote">"我想买苹果,因为爸爸的 iPhone 是苹果做的"</div>
+        </div>
+      </div>
+
+      <button class="ceremony-cta" onclick="openShare()">🎉 继承我的牛牛号 →</button>
+      <div class="ceremony-secondary" onclick="openShare()">📤 <u>把这一刻分享给朋友</u></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="share" onclick="closeShare(event)">
+  <div class="share-modal" onclick="event.stopPropagation()">
+    <div class="share-card">
+      <div class="share-card-bg">
+        <div class="ceremony-stars">
+          <span class="s1">✨</span>
+          <span class="s2">⭐</span>
+          <span class="s3">✨</span>
+          <span class="s4">⭐</span>
+          <span class="s5">✨</span>
+          <span class="s6">⭐</span>
+        </div>
+      </div>
+      <div class="share-content">
+        <div class="share-brand">🐮 Futu · 小小股票储蓄罐</div>
+        <div class="share-niuniu">🐂</div>
+        <div class="share-headline">小宇 18 岁啦 🎓</div>
+        <div class="share-tag">陪伴 10 年的牛牛 · 今日毕业</div>
+
+        <div class="share-stats">
+          <div class="ss-row">
+            <div class="ss-num">HK$ 86,420</div>
+            <div class="ss-label">10 年攒下</div>
+          </div>
+          <div class="ss-divider"></div>
+          <div class="ss-row">
+            <div class="ss-num green">+186%</div>
+            <div class="ss-label">总收益</div>
+          </div>
+        </div>
+
+        <div class="share-quote">
+          "我想用它给妈妈拍照片"<br>
+          <small>— 8 岁的小宇,在买下第一只苹果股票时说</small>
+        </div>
+
+        <div class="share-foot">
+          <div class="share-qr">▦</div>
+          <div class="share-foot-text">
+            <div>开启你孩子的牛牛</div>
+            <div class="small">扫码下载 Futu 牛牛 App</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-actions">
+      <div class="share-btn"><span>📷</span>保存图片</div>
+      <div class="share-btn"><span>💬</span>WhatsApp</div>
+      <div class="share-btn"><span>📱</span>微信</div>
+      <div class="share-btn"><span>📋</span>复制链接</div>
+    </div>
+
+    <button class="close" onclick="closeShare()" style="display:block;margin:14px auto 0;background:#f0f3f5;color:#636e72;">关闭</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="transfer" onclick="closeTransfer(event)">
+  <div class="transfer-modal" onclick="event.stopPropagation()">
+    <div class="transfer-header">
+      <div class="back" onclick="closeTransfer()">‹</div>
+      <div>
+        <div class="title">🐮 牛牛号调拨</div>
+        <div class="subtitle">从我的账户拨钱到小宇的储蓄罐</div>
+      </div>
+    </div>
+    <div class="transfer-body">
+      <div class="account-flow">
+        <div class="account-box source">
+          <div class="a-icon">👨</div>
+          <div class="a-label">从</div>
+          <div class="a-name">爸爸的牛牛号</div>
+          <div class="a-balance">余额 HK$ 24,580</div>
+        </div>
+        <div class="account-arrow">→</div>
+        <div class="account-box dest">
+          <div class="a-icon">🐮</div>
+          <div class="a-label">到</div>
+          <div class="a-name">小宇的储蓄罐</div>
+          <div class="a-balance">现有 HK$ 2,847</div>
+        </div>
+      </div>
+
+      <div class="amount-input-area">
+        <div class="input-label">本次调拨金额</div>
+        <div class="amount-display"><span class="currency">HK$</span>500</div>
+        <div class="quick-amounts">
+          <div class="quick-btn">100</div>
+          <div class="quick-btn">200</div>
+          <div class="quick-btn active">500</div>
+          <div class="quick-btn">1,000</div>
+          <div class="quick-btn">2,000</div>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <span>到账时间</span><span class="v green">秒到账 ⚡</span>
+      </div>
+      <div class="info-row">
+        <span>手续费</span><span class="v green">免费</span>
+      </div>
+      <div class="info-row">
+        <span>调拨后我的牛牛号余额</span><span class="v">HK$ 24,080</span>
+      </div>
+      <div class="info-row">
+        <span>调拨后小宇的零花钱</span><span class="v">HK$ 1,000</span>
+      </div>
+
+      <div class="auto-toggle">
+        <span class="at-icon">🔄</span>
+        <div class="at-text">设为<strong>每月 1 号自动调拨</strong> HK$ 500<br>培养孩子的定投习惯</div>
+        <div class="switch-mini"></div>
+      </div>
+
+      <button class="confirm-cta" onclick="confirmTransfer('从牛牛号调拨')">确认调拨 HK$ 500</button>
+      <div class="secure-note">🔒 联名账户内部调拨 · 受 SFC 监管保护</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="oneclick" onclick="closeOneClick(event)">
+  <div class="transfer-modal" onclick="event.stopPropagation()">
+    <div class="transfer-header">
+      <div class="back" onclick="closeOneClick()">‹</div>
+      <div>
+        <div class="title" id="oc-title">⭐ 天星银行 · 一键入金</div>
+        <div class="subtitle" id="oc-subtitle">已绑定账户,无需再次验证</div>
+      </div>
+    </div>
+    <div class="transfer-body">
+      <div class="one-click-banner">
+        <span class="ocb-icon">⚡</span>
+        <div class="ocb-text">
+          已绑定 <strong id="oc-bank-name">天星银行 ****1234</strong><br>
+          以后入金只需<strong>一键确认</strong>,无需再输密码
+        </div>
+      </div>
+
+      <div class="account-flow">
+        <div class="account-box source">
+          <div class="a-icon" id="oc-bank-icon">⭐</div>
+          <div class="a-label">从</div>
+          <div class="a-name" id="oc-bank-display">天星银行</div>
+          <div class="a-balance">****1234</div>
+        </div>
+        <div class="account-arrow">→</div>
+        <div class="account-box dest">
+          <div class="a-icon">🐮</div>
+          <div class="a-label">到</div>
+          <div class="a-name">小宇的储蓄罐</div>
+          <div class="a-balance">现有 HK$ 2,847</div>
+        </div>
+      </div>
+
+      <div class="amount-input-area">
+        <div class="input-label">本次入金金额</div>
+        <div class="amount-display"><span class="currency">HK$</span>500</div>
+        <div class="quick-amounts">
+          <div class="quick-btn">100</div>
+          <div class="quick-btn">200</div>
+          <div class="quick-btn active">500</div>
+          <div class="quick-btn">1,000</div>
+          <div class="quick-btn">2,000</div>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <span>到账时间</span><span class="v green" id="oc-eta">即时到账 ⚡</span>
+      </div>
+      <div class="info-row">
+        <span>手续费</span><span class="v green">免费</span>
+      </div>
+      <div class="info-row">
+        <span>每日限额</span><span class="v">HK$ 50,000</span>
+      </div>
+
+      <div class="auto-toggle">
+        <span class="at-icon">📅</span>
+        <div class="at-text">开启<strong>每月自动定投</strong><br>每月 1 号自动从天星扣 HK$ 500</div>
+        <div class="switch-mini"></div>
+      </div>
+
+      <button class="confirm-cta" onclick="confirmOneClick()">一键入金 HK$ 500</button>
+      <div class="secure-note">🔒 银行级加密 · 受 HKMA 监管保护</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="invest" onclick="closeInvest(event)">
+  <div class="invest-page" onclick="event.stopPropagation()">
+    <div class="invest-page-header">
+      <div class="back" onclick="closeInvest()">‹</div>
+      <div>
+        <div class="title">💼 投资中心</div>
+        <div class="subtitle">把零花钱变成会成长的罐子</div>
+      </div>
+    </div>
+    <div class="invest-body">
+      <div class="invest-cash-card">
+        <div class="label">🪙 可投资的零花钱</div>
+        <div class="value">HK$ 500.00</div>
+        <div class="breakdown">
+          <div class="chip">💰 爸爸刚入金 HK$500</div>
+          <div class="chip">🌟 苹果分红 HK$0</div>
+        </div>
+      </div>
+
+      <div class="pending-banner">
+        <div class="pb-avatar">🧒</div>
+        <div class="pb-text">
+          小宇有 <strong>2 个待审批的提议</strong> 在等这笔钱:<br>
+          🎮 想买任天堂 HK$200 · 🍔 想加仓麦当劳 HK$150
+        </div>
+      </div>
+
+      <div class="next-title">这笔钱怎么用?</div>
+
+      <div class="next-action featured">
+        <div class="ne-icon">✅</div>
+        <div class="ne-info">
+          <div class="ne-name">批准小宇的提议 <span class="ne-tag">推荐</span></div>
+          <div class="ne-desc">用 HK$350 完成 2 个提议,剩 HK$150 留作现金</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+      <div class="next-action">
+        <div class="ne-icon">📊</div>
+        <div class="ne-info">
+          <div class="ne-name">按现有比例自动加仓</div>
+          <div class="ne-desc">智能分配到 5 只现有罐子,保持组合结构</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+      <div class="next-action">
+        <div class="ne-icon">🆕</div>
+        <div class="ne-info">
+          <div class="ne-name">和小宇一起开个新罐子</div>
+          <div class="ne-desc">发起对话,让孩子先讲讲想买什么</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+      <div class="next-action">
+        <div class="ne-icon">⏸️</div>
+        <div class="ne-info">
+          <div class="ne-name">先放着,以后再说</div>
+          <div class="ne-desc">资金留在零花钱里,不产生交易</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="success" onclick="closeSuccess(event)">
+  <div class="success-modal" onclick="event.stopPropagation()">
+    <div class="confetti">🎉 ✨ 🎊 ✨ 🎉</div>
+    <span class="success-coin">💰</span>
+    <h2>入金成功啦!</h2>
+    <div class="amount">+ HK$ 500.00</div>
+    <div class="from">来源:<span id="success-source">从牛牛号调拨</span> · 已秒到账</div>
+
+    <div class="balance-flip">
+      <div class="label">
+        小宇罐子总余额
+        <div class="old">HK$ 2,847</div>
+      </div>
+      <div class="arrow-big">→</div>
+      <div class="new">HK$ 3,347</div>
+    </div>
+
+    <div class="notify-toggle">
+      <span>📬 让小宇下次打开时看到这个惊喜</span>
+      <div class="switch"></div>
+    </div>
+
+    <button class="close" onclick="goToInvest()" style="display:block;margin:18px auto 8px;width:100%;">去投资这笔钱 →</button>
+    <button class="close" onclick="closeSuccess()" style="display:block;margin:0 auto;background:#f0f3f5;color:#636e72;">稍后处理</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="album" onclick="closeAlbum(event)">
+  <div class="album-modal" onclick="event.stopPropagation()">
+    <div class="album-header">
+      <h2>📖 我的公司卡册</h2>
+      <div class="sub">已收集 5 / 12 张 · 读完小故事就能解锁</div>
+    </div>
+    <div class="album-grid" id="album-grid"></div>
+    <div class="album-tip">
+      💡 每张卡有 3 页小故事。读完一页就能翻开下一页,集齐就能拿到这家公司的"金卡"!
+    </div>
+    <button class="close" onclick="closeAlbum()" style="display:block;margin:0 auto;">关上卡册</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="card-detail-modal" onclick="closeCardDetail(event)">
+  <div class="card-detail" onclick="event.stopPropagation()">
+    <div class="big" id="cd-emoji">🍎</div>
+    <h3 id="cd-name">苹果公司</h3>
+    <div class="tag" id="cd-tag">已读 2 / 3 页</div>
+    <div class="progress-bar"><div class="fill" id="cd-fill" style="width:66%"></div></div>
+    <div class="pages" id="cd-pages"></div>
+    <button class="close" onclick="closeCardDetail()">知道啦 ✨</button>
+  </div>
+</div>
+
+<script>
+const cardData = [
+  { key:'apple', emoji:'🍎', name:'苹果', unlocked:true, read:2, total:3, isNew:false,
+    pages:[
+      {title:'谁创造了苹果?', body:'两个叫乔布斯和沃兹的年轻人在车库里做出了第一台苹果电脑 🚗'},
+      {title:'苹果在做什么?', body:'iPhone、iPad、Mac…全世界 20 亿人在用它的产品'},
+      {title:'为什么叫苹果?', body:'因为乔布斯曾经在一个苹果园工作过,他觉得"苹果"听起来又好玩又简单'},
+    ]},
+  { key:'disney', emoji:'🏰', name:'迪士尼', unlocked:true, read:3, total:3, isNew:false,
+    pages:[
+      {title:'米奇是怎么来的?', body:'画家华特·迪士尼在火车上画出了米奇的样子 🐭'},
+      {title:'迪士尼有多大?', body:'乐园、电影、漫威、星球大战…都是它的!'},
+      {title:'金卡解锁 🏆', body:'你已经成为迪士尼的小专家啦!'},
+    ]},
+  { key:'nintendo', emoji:'🎮', name:'任天堂', unlocked:true, read:1, total:3, isNew:true,
+    pages:[
+      {title:'130 岁的玩具公司', body:'任天堂一开始是做扑克牌的,你信吗? 🃏'},
+      {title:'马力欧是谁画的?', body:'(还没解锁)'},
+      {title:'Switch 卖了多少台?', body:'(还没解锁)'},
+    ]},
+  { key:'tesla', emoji:'🚗', name:'特斯拉', unlocked:true, read:1, total:3, isNew:false,
+    pages:[
+      {title:'会自己开的车', body:'特斯拉的车不烧油,用电跑,还能自己看路!'},
+      {title:'(还没解锁)', body:''},
+      {title:'(还没解锁)', body:''},
+    ]},
+  { key:'mcd', emoji:'🍔', name:'麦当劳', unlocked:true, read:0, total:3, isNew:true,
+    pages:[
+      {title:'第一家在哪?', body:'(还没解锁 — 读一读就能翻开)'},
+      {title:'(还没解锁)', body:''},
+      {title:'(还没解锁)', body:''},
+    ]},
+  { key:'lego', emoji:'🧱', name:'乐高', unlocked:false },
+  { key:'pokemon', emoji:'⚡', name:'宝可梦', unlocked:false },
+  { key:'nike', emoji:'👟', name:'耐克', unlocked:false },
+  { key:'lvmh', emoji:'👜', name:'LV', unlocked:false },
+  { key:'msft', emoji:'🪟', name:'微软', unlocked:false },
+  { key:'spotify', emoji:'🎵', name:'Spotify', unlocked:false },
+  { key:'cocacola', emoji:'🥤', name:'可口可乐', unlocked:false },
+];
+
+function renderAlbum() {
+  const g = document.getElementById('album-grid');
+  g.innerHTML = cardData.map(c => {
+    if (!c.unlocked) {
+      return `<div class="card locked"><span class="lock-icon">🔒</span><div class="card-emoji">${c.emoji}</div><div class="card-name">???</div></div>`;
+    }
+    const newBadge = c.isNew ? '<span class="new-badge">NEW</span>' : '';
+    return `<div class="card unlocked" onclick="openCardDetail('${c.key}')">${newBadge}<div class="card-emoji">${c.emoji}</div><div class="card-name">${c.name}</div><div class="card-pages">${c.read}/${c.total} 页</div></div>`;
+  }).join('');
+}
+
+function confirmOnboard() {
+  const acct = document.getElementById('ob-account').value.trim();
+  const pwd = document.getElementById('ob-password').value.trim();
+  const name = document.getElementById('ob-childname').value.trim();
+  const err = document.getElementById('ob-error');
+  if (!acct || !pwd || !name) {
+    err.textContent = '请填写所有信息';
+    err.classList.add('show');
+    return;
+  }
+  if (pwd !== '8888') {
+    err.textContent = '密码错误,默认密码是 8888';
+    err.classList.add('show');
+    return;
+  }
+  err.classList.remove('show');
+  document.getElementById('header-title').textContent = name + '的股票储蓄罐 🏠';
+  document.getElementById('joint-names').textContent = '爸爸 & ' + name;
+  try { localStorage.setItem('piggybank_child', name); } catch(e) {}
+  document.getElementById('onboard').classList.remove('show');
+}
+window.addEventListener('DOMContentLoaded', () => {
+  let saved = null;
+  try { saved = localStorage.getItem('piggybank_child'); } catch(e) {}
+  if (saved) {
+    document.getElementById('header-title').textContent = saved + '的股票储蓄罐 🏠';
+    document.getElementById('joint-names').textContent = '爸爸 & ' + saved;
+  } else {
+    document.getElementById('onboard').classList.add('show');
+  }
+});
+
+function openCeremony() {
+  document.getElementById('ceremony').classList.add('show');
+}
+function closeCeremony(e) {
+  if (e && e.target.id !== 'ceremony') return;
+  document.getElementById('ceremony').classList.remove('show');
+}
+function openShare() {
+  document.getElementById('share').classList.add('show');
+}
+function closeShare(e) {
+  if (e && e.target.id !== 'share') return;
+  document.getElementById('share').classList.remove('show');
+}
+
+const SAVED = 2847;
+const wishes = [
+  { key:'iphone', emoji:'📱', name:'iPhone 17',         target:10000, note:'"我想用它给妈妈拍照片"',     hearts:0, exp:false },
+  { key:'switch', emoji:'🎮', name:'Switch 2',          target:3000,  note:'"和爸爸一起玩马力欧"',       hearts:3, exp:false },
+  { key:'lego',   emoji:'🧱', name:'乐高千年隼',          target:8000,  note:'"星战里最酷的飞船!"',       hearts:0, exp:false },
+  { key:'japan',  emoji:'✈️', name:'和爸爸去日本看樱花',   target:15000, note:'"明年春天可以吗?"',         hearts:0, exp:true  },
+  { key:'bike',   emoji:'🚴', name:'捷安特山地车',         target:5000,  note:'"想骑去学校"',             hearts:0, exp:false },
+  { key:'guitar', emoji:'🎸', name:'小吉他 + 一年课',      target:4500,  note:'"我想学《晴天》给妈妈听"',  hearts:0, exp:true  },
+];
+const achieved = [
+  { emoji:'📚', name:'哈利波特全套', price:'HK$ 1,200 · 2025年12月 完成' },
+  { emoji:'⚽', name:'足球 + 球鞋',  price:'HK$ 800 · 2025年9月 完成' },
+];
+let currentWishKey = 'iphone';
+
+function fmt(n) { return n.toLocaleString('en-US'); }
+function pct(target) { return Math.min(100, Math.round(SAVED / target * 100)); }
+
+function renderGoalCard() {
+  const w = wishes.find(x => x.key === currentWishKey);
+  const p = pct(w.target);
+  document.getElementById('goal-icon').textContent = w.emoji;
+  document.getElementById('goal-name').textContent = '攒一个 ' + w.name;
+  document.getElementById('goal-target').textContent = fmt(w.target);
+  document.getElementById('goal-percent').textContent = p + '%';
+  document.getElementById('goal-bar-fill').style.width = p + '%';
+  const remaining = Math.max(0, w.target - SAVED);
+  document.getElementById('goal-remaining').textContent = 'HK$ ' + fmt(remaining);
+}
+
+function renderWishlist() {
+  const container = document.getElementById('wishlist-content');
+  const current = wishes.find(x => x.key === currentWishKey);
+  const others = wishes.filter(x => x.key !== currentWishKey);
+
+  let html = '';
+  // current wish (highlighted)
+  const cp = pct(current.target);
+  html += `
+    <div class="wishlist-current">
+      <span class="now-tag">⭐ 现在在攒</span>
+      <div class="wish" style="background:transparent;padding:0;margin:0;border:none;">
+        <div class="w-icon">${current.emoji}</div>
+        <div class="w-info">
+          <div class="w-name">${current.name}${current.exp?' <span class="heart-tag">体验</span>':''}</div>
+          <div class="w-price">HK$ ${fmt(current.target)} · 攒了 ${fmt(SAVED)}</div>
+          <div class="w-mini-bar"><div class="w-mini-fill" style="width:${cp}%"></div></div>
+          <div class="w-note">${current.note}</div>
+        </div>
+        <div class="w-percent">${cp}%</div>
+      </div>
+    </div>
+    <div class="wishlist-section-title">
+      <span>📋 还想要的</span>
+      <span>${others.length} 个心愿 · 点一下切换</span>
+    </div>
+  `;
+  // other wishes
+  others.forEach(w => {
+    const p = pct(w.target);
+    const heart = w.hearts ? `<span class="heart-tag">❤ 想了 ${w.hearts} 次</span>` : '';
+    const exp = w.exp ? `<span class="heart-tag">体验</span>` : '';
+    html += `
+      <div class="wish ${w.exp?'experience':''}" onclick="switchWish('${w.key}')">
+        <div class="w-icon">${w.emoji}</div>
+        <div class="w-info">
+          <div class="w-name">${w.name} ${heart}${exp}</div>
+          <div class="w-price">HK$ ${fmt(w.target)}</div>
+          <div class="w-note">${w.note}</div>
+        </div>
+        <div class="w-percent">${p}%</div>
+      </div>
+    `;
+  });
+  html += `<div class="add-wish">+ 加一个新心愿</div>`;
+  // achieved
+  html += `
+    <div class="achieved-section">
+      <div class="wishlist-section-title">
+        <span>🏆 已经实现的</span>
+        <span>${achieved.length} 个</span>
+      </div>
+  `;
+  achieved.forEach(a => {
+    html += `
+      <div class="wish achieved">
+        <div class="w-icon">${a.emoji}</div>
+        <div class="w-info">
+          <div class="w-name">${a.name}</div>
+          <div class="w-price">${a.price}</div>
+        </div>
+        <div class="w-percent">✓</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function switchWish(key) {
+  currentWishKey = key;
+  renderGoalCard();
+  renderWishlist();
+}
+
+function openWishlist() {
+  renderWishlist();
+  document.getElementById('wishlist').classList.add('show');
+}
+function closeWishlist(e) {
+  if (e && e.target.id !== 'wishlist') return;
+  document.getElementById('wishlist').classList.remove('show');
+}
+
+function openDeposit() {
+  document.getElementById('deposit').classList.add('show');
+}
+function closeDeposit(e) {
+  if (e && e.target.id !== 'deposit') return;
+  document.getElementById('deposit').classList.remove('show');
+}
+function completeDeposit(source) {
+  document.getElementById('deposit').classList.remove('show');
+  document.getElementById('success-source').textContent = source;
+  setTimeout(() => document.getElementById('success').classList.add('show'), 200);
+}
+function openTransfer() {
+  document.getElementById('deposit').classList.remove('show');
+  setTimeout(() => document.getElementById('transfer').classList.add('show'), 200);
+}
+function closeTransfer(e) {
+  if (e && e.target.id !== 'transfer') return;
+  document.getElementById('transfer').classList.remove('show');
+}
+function confirmTransfer(source) {
+  document.getElementById('transfer').classList.remove('show');
+  document.getElementById('success-source').textContent = source;
+  setTimeout(() => document.getElementById('success').classList.add('show'), 250);
+}
+function openOneClick(bank) {
+  document.getElementById('deposit').classList.remove('show');
+  const isTianxing = bank === '天星银行';
+  document.getElementById('oc-title').textContent = isTianxing ? '⭐ 天星银行 · 一键入金' : '🏦 FPS 转数快 · 一键入金';
+  document.getElementById('oc-subtitle').textContent = isTianxing ? '已绑定账户,无需再次验证' : '已绑定汇丰账户,无需再次验证';
+  document.getElementById('oc-bank-name').textContent = isTianxing ? '天星银行 ****1234' : '汇丰银行 ****5678';
+  document.getElementById('oc-bank-icon').textContent = isTianxing ? '⭐' : '🏦';
+  document.getElementById('oc-bank-display').textContent = isTianxing ? '天星银行' : '汇丰银行';
+  document.getElementById('oc-eta').textContent = isTianxing ? '即时到账 ⚡' : '约 1-2 小时';
+  window.__ocBank = bank;
+  setTimeout(() => document.getElementById('oneclick').classList.add('show'), 200);
+}
+function closeOneClick(e) {
+  if (e && e.target.id !== 'oneclick') return;
+  document.getElementById('oneclick').classList.remove('show');
+}
+function confirmOneClick() {
+  document.getElementById('oneclick').classList.remove('show');
+  document.getElementById('success-source').textContent = window.__ocBank || '银行入金';
+  setTimeout(() => document.getElementById('success').classList.add('show'), 250);
+}
+function closeSuccess(e) {
+  if (e && e.target.id !== 'success') return;
+  document.getElementById('success').classList.remove('show');
+}
+function openInvest() {
+  document.getElementById('invest').classList.add('show');
+}
+function closeInvest(e) {
+  if (e && e.target.id !== 'invest') return;
+  document.getElementById('invest').classList.remove('show');
+}
+function goToInvest() {
+  document.getElementById('success').classList.remove('show');
+  setTimeout(() => openInvest(), 200);
+}
+
+function openAlbum() {
+  renderAlbum();
+  document.getElementById('album').classList.add('show');
+}
+function closeAlbum(e) {
+  if (e && e.target.id !== 'album') return;
+  document.getElementById('album').classList.remove('show');
+}
+function openCardDetail(key) {
+  const c = cardData.find(x => x.key === key);
+  document.getElementById('cd-emoji').textContent = c.emoji;
+  document.getElementById('cd-name').textContent = c.name;
+  document.getElementById('cd-tag').textContent = `已读 ${c.read} / ${c.total} 页`;
+  document.getElementById('cd-fill').style.width = `${(c.read/c.total)*100}%`;
+  document.getElementById('cd-pages').innerHTML = c.pages.map((p,i) => {
+    const done = i < c.read;
+    return `<div class="page-item ${done?'':'locked'}"><span class="check">${done?'✅':'🔒'}</span><div><strong>${p.title}</strong><br>${done?p.body:'读完上一页就能翻开'}</div></div>`;
+  }).join('');
+  document.getElementById('card-detail-modal').classList.add('show');
+}
+function closeCardDetail(e) {
+  if (e && e.target.id !== 'card-detail-modal') return;
+  document.getElementById('card-detail-modal').classList.remove('show');
+}
+
+const jarData = {
+  apple: { emoji: '🍎', name: '苹果罐子', sub: '你从 2025年9月 开始养它',
+    value: 'HK$ 892.40', cost: 'HK$ 800.00', profit: '+HK$ 92.40', div: 'HK$ 4.20',
+    story: '📖 <strong>你知道吗?</strong><br>苹果公司每卖出 10 台 iPhone,你的罐子就会多 0.002 元。全世界有超过 20 亿人在用它的产品,包括你爸爸妈妈的手机!' },
+  disney: { emoji: '🏰', name: '迪士尼罐子', sub: '你从 2025年11月 开始养它',
+    value: 'HK$ 640.10', cost: 'HK$ 600.00', profit: '+HK$ 40.10', div: 'HK$ 2.80',
+    story: '📖 <strong>你知道吗?</strong><br>米奇老鼠、冰雪奇缘、漫威英雄都是迪士尼的!每次有人去迪士尼乐园玩,你的罐子都会开心地长大一点点 🎢' },
+  nintendo: { emoji: '🎮', name: '任天堂罐子', sub: '你从 2026年1月 开始养它',
+    value: 'HK$ 515.00', cost: 'HK$ 500.00', profit: '+HK$ 15.00', div: 'HK$ 0' ,
+    story: '📖 <strong>你知道吗?</strong><br>Switch 和马力欧都是它做的!任天堂已经 130 多岁啦,一开始是做扑克牌的,你信吗?' },
+  tesla: { emoji: '🚗', name: '特斯拉罐子', sub: '你从 2025年12月 开始养它',
+    value: 'HK$ 420.00', cost: 'HK$ 450.00', profit: '-HK$ 30.00', div: 'HK$ 0',
+    story: '📖 <strong>小财的话:</strong><br>今天它有点不开心,因为最近卖的车少了一些。但是股票会上上下下很正常,就像你考试也有好有坏 💪 长大了才看得清楚。' },
+  mcd: { emoji: '🍔', name: '麦当劳罐子', sub: '你从 2026年2月 开始养它',
+    value: 'HK$ 380.00', cost: 'HK$ 370.00', profit: '+HK$ 10.00', div: 'HK$ 1.50',
+    story: '📖 <strong>你知道吗?</strong><br>全世界每秒钟有 75 个汉堡被卖出去!每卖一个,你的罐子都在悄悄长大 🍟' },
+};
+
+function openJar(key) {
+  const d = jarData[key];
+  document.getElementById('m-emoji').textContent = d.emoji;
+  document.getElementById('m-name').textContent = d.name;
+  document.getElementById('m-sub').textContent = d.sub;
+  document.getElementById('m-value').textContent = d.value;
+  document.getElementById('m-cost').textContent = d.cost;
+  const p = document.getElementById('m-profit');
+  p.textContent = d.profit;
+  p.className = 'v ' + (d.profit.startsWith('-') ? 'down' : 'up');
+  document.getElementById('m-div').textContent = d.div;
+  document.getElementById('m-story').innerHTML = d.story;
+  document.getElementById('modal').classList.add('show');
+}
+function closeJar(e) {
+  document.getElementById('modal').classList.remove('show');
+}
+</script>
+</body>
+</html>
