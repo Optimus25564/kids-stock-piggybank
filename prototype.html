@@ -1236,6 +1236,107 @@
   .wish.achieved .w-icon { background: linear-gradient(135deg, #d4f4dd, #b8e8c4); }
   .wish.achieved .w-percent { color: #00b894; font-size: 16px; }
 
+  /* trade password pad */
+  .pwd-modal {
+    background: white;
+    border-radius: 28px 28px 0 0;
+    padding: 22px 22px 28px;
+    width: 100%;
+    max-width: 420px;
+    position: absolute;
+    bottom: 0;
+    animation: slideUp 0.3s;
+  }
+  .pwd-modal h3 { font-size: 17px; text-align: center; margin-bottom: 4px; }
+  .pwd-modal .pwd-sub { font-size: 12px; color: #95a5a6; text-align: center; margin-bottom: 18px; }
+  .pwd-modal .pwd-amount {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #e17055;
+    margin-bottom: 18px;
+  }
+  .pwd-dots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    transition: transform 0.1s;
+  }
+  .pwd-dots.shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+  .pwd-dot {
+    width: 38px;
+    height: 44px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #2d3436;
+    background: #f8f9fa;
+    transition: all 0.15s;
+  }
+  .pwd-dot.filled {
+    border-color: #fdcb6e;
+    background: white;
+  }
+  .pwd-dot.filled::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: #2d3436;
+    border-radius: 50%;
+  }
+  .pwd-error {
+    text-align: center;
+    color: #e17055;
+    font-size: 11px;
+    height: 16px;
+    margin-bottom: 8px;
+  }
+  .pwd-hint {
+    text-align: center;
+    font-size: 10px;
+    color: #95a5a6;
+    margin-bottom: 14px;
+  }
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .num-key {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 16px 0;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #2d3436;
+    transition: all 0.1s;
+    user-select: none;
+  }
+  .num-key:active { background: #fdcb6e; color: white; transform: scale(0.96); }
+  .num-key.empty { background: transparent; cursor: default; }
+  .num-key.empty:active { background: transparent; transform: none; }
+  .num-key.del { font-size: 18px; }
+  .pwd-cancel {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #95a5a6;
+    cursor: pointer;
+  }
+
   /* onboarding */
   .onboard-modal {
     background: white;
@@ -2341,6 +2442,39 @@
   </div>
 </div>
 
+<div class="modal-bg" id="pwd" onclick="closePwd(event)" style="align-items:flex-end;">
+  <div class="pwd-modal" onclick="event.stopPropagation()">
+    <h3>🔒 输入交易密码</h3>
+    <div class="pwd-sub">为了你的资金安全,请输入 6 位交易密码</div>
+    <div class="pwd-amount" id="pwd-amount">HK$ 500</div>
+    <div class="pwd-dots" id="pwd-dots">
+      <div class="pwd-dot"></div>
+      <div class="pwd-dot"></div>
+      <div class="pwd-dot"></div>
+      <div class="pwd-dot"></div>
+      <div class="pwd-dot"></div>
+      <div class="pwd-dot"></div>
+    </div>
+    <div class="pwd-error" id="pwd-error"></div>
+    <div class="pwd-hint">默认密码 123456 · 仅原型演示</div>
+    <div class="numpad">
+      <div class="num-key" onclick="pwdInput('1')">1</div>
+      <div class="num-key" onclick="pwdInput('2')">2</div>
+      <div class="num-key" onclick="pwdInput('3')">3</div>
+      <div class="num-key" onclick="pwdInput('4')">4</div>
+      <div class="num-key" onclick="pwdInput('5')">5</div>
+      <div class="num-key" onclick="pwdInput('6')">6</div>
+      <div class="num-key" onclick="pwdInput('7')">7</div>
+      <div class="num-key" onclick="pwdInput('8')">8</div>
+      <div class="num-key" onclick="pwdInput('9')">9</div>
+      <div class="num-key empty"></div>
+      <div class="num-key" onclick="pwdInput('0')">0</div>
+      <div class="num-key del" onclick="pwdDel()">⌫</div>
+    </div>
+    <div class="pwd-cancel" onclick="closePwd()">取消</div>
+  </div>
+</div>
+
 <div class="modal-bg" id="onboard">
   <div class="onboard-modal" onclick="event.stopPropagation()">
     <div class="ob-emoji">🐮</div>
@@ -3004,9 +3138,62 @@ function closeTransfer(e) {
   document.getElementById('transfer').classList.remove('show');
 }
 function confirmTransfer(source) {
-  document.getElementById('transfer').classList.remove('show');
-  document.getElementById('success-source').textContent = source;
-  setTimeout(() => document.getElementById('success').classList.add('show'), 250);
+  openPwd('HK$ 500', () => {
+    document.getElementById('transfer').classList.remove('show');
+    document.getElementById('success-source').textContent = source;
+    setTimeout(() => document.getElementById('success').classList.add('show'), 250);
+  });
+}
+
+let pwdBuffer = '';
+let pwdOnSuccess = null;
+const PWD_CORRECT = '123456';
+function openPwd(amountText, onSuccess) {
+  pwdBuffer = '';
+  pwdOnSuccess = onSuccess;
+  document.getElementById('pwd-amount').textContent = amountText;
+  document.getElementById('pwd-error').textContent = '';
+  refreshPwdDots();
+  document.getElementById('pwd').classList.add('show');
+}
+function closePwd(e) {
+  if (e && e.target.id !== 'pwd') return;
+  document.getElementById('pwd').classList.remove('show');
+}
+function refreshPwdDots() {
+  const dots = document.querySelectorAll('#pwd-dots .pwd-dot');
+  dots.forEach((d, i) => {
+    if (i < pwdBuffer.length) d.classList.add('filled');
+    else d.classList.remove('filled');
+  });
+}
+function pwdInput(digit) {
+  if (pwdBuffer.length >= 6) return;
+  pwdBuffer += digit;
+  document.getElementById('pwd-error').textContent = '';
+  refreshPwdDots();
+  if (pwdBuffer.length === 6) {
+    setTimeout(() => {
+      if (pwdBuffer === PWD_CORRECT) {
+        document.getElementById('pwd').classList.remove('show');
+        if (pwdOnSuccess) pwdOnSuccess();
+      } else {
+        const dots = document.getElementById('pwd-dots');
+        dots.classList.add('shake');
+        document.getElementById('pwd-error').textContent = '密码错误,请重新输入';
+        setTimeout(() => {
+          dots.classList.remove('shake');
+          pwdBuffer = '';
+          refreshPwdDots();
+        }, 500);
+      }
+    }, 200);
+  }
+}
+function pwdDel() {
+  pwdBuffer = pwdBuffer.slice(0, -1);
+  document.getElementById('pwd-error').textContent = '';
+  refreshPwdDots();
 }
 function openOneClick(bank) {
   document.getElementById('deposit').classList.remove('show');
