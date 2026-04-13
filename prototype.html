@@ -3918,29 +3918,27 @@ function submitTrade() {
   }
   err.textContent = '';
   const action = tradeMode;
-  openPwd('HK$ ' + amount, () => {
-    if (action === 'buy') {
-      d.value += amount;
-      d.cost += amount;
-    } else {
-      d.value -= amount;
-      d.cost = Math.max(0, d.cost - amount);
-    }
-    renderJarModal();
-    const shelfJar = document.querySelector(`.jar[data-key="${currentJarKey}"] .value`);
-    if (shelfJar) shelfJar.textContent = 'HK$ ' + Math.round(d.value);
-    exitTradeMode();
-    const t = document.createElement('div');
-    t.className = 'jar-toast';
-    t.innerHTML = `
-      <span class="jt-emoji">${action==='buy'?'💰':'💸'}</span>
-      <div class="jt-title">${action==='buy'?'已追投':'已卖出'} HK$ ${amount}</div>
-      <div class="jt-sub">${d.name} 现在 ${fmtMoney(d.value)}</div>
-    `;
-    document.body.appendChild(t);
-    setTimeout(() => { t.style.transition='opacity 0.4s'; t.style.opacity='0'; }, 1600);
-    setTimeout(() => t.remove(), 2100);
-  });
+  if (action === 'buy') {
+    d.value += amount;
+    d.cost += amount;
+  } else {
+    d.value -= amount;
+    d.cost = Math.max(0, d.cost - amount);
+  }
+  renderJarModal();
+  const shelfJar = document.querySelector(`.jar[data-key="${currentJarKey}"] .value`);
+  if (shelfJar) shelfJar.textContent = 'HK$ ' + Math.round(d.value);
+  exitTradeMode();
+  const t = document.createElement('div');
+  t.className = 'jar-toast';
+  t.innerHTML = `
+    <span class="jt-emoji">${action==='buy'?'💰':'💸'}</span>
+    <div class="jt-title">${action==='buy'?'已追投':'已卖出'} HK$ ${amount}</div>
+    <div class="jt-sub">${d.name} 现在 ${fmtMoney(d.value)}</div>
+  `;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.transition='opacity 0.4s'; t.style.opacity='0'; }, 1600);
+  setTimeout(() => t.remove(), 2100);
 }
 </script>
 </body>
