@@ -2681,14 +2681,14 @@
     </div>
     <button class="deposit-btn" onclick="openDeposit()">+ 入金</button>
     <div class="total-label">我的罐子总值</div>
-    <div class="total-value">HK$ 2,847.60</div>
+    <div class="total-value" id="header-jar-total">HK$ 2,847.50</div>
     <div class="total-change"><span class="up-arrow">▲</span> HK$ 42.30 今天 (+1.51%)</div>
     <div class="cash-row">
       <div class="cash-left">
         <div class="coin-icon">🪙</div>
         <div class="cash-info">
           <div class="cash-label">零花钱 · 还没投资</div>
-          <div class="cash-value">HK$ 500.00</div>
+          <div class="cash-value" id="header-cash">HK$ 500.00</div>
         </div>
       </div>
       <button class="invest-now" onclick="openInvest()">去投资 →</button>
@@ -2705,7 +2705,7 @@
       <div class="goal-edit" onclick="openWishlist()">心愿单 →</div>
     </div>
     <div class="goal-progress-row">
-      <div class="goal-current">HK$ 2,847 <span class="of">/ <span id="goal-target">10,000</span></span></div>
+      <div class="goal-current"><span id="goal-saved">HK$ 3,347</span> <span class="of">/ <span id="goal-target">10,000</span></span></div>
       <div class="goal-percent" id="goal-percent">28%</div>
     </div>
     <div class="goal-bar">
@@ -3220,7 +3220,7 @@
           <div class="a-icon">🐮</div>
           <div class="a-label">到</div>
           <div class="a-name">小宇的储蓄罐</div>
-          <div class="a-balance">现有 HK$ 2,847</div>
+          <div class="a-balance">现有 <span id="tr-dest-bal">HK$ 3,347</span></div>
         </div>
       </div>
 
@@ -3276,7 +3276,7 @@
           <div class="a-icon">🐮</div>
           <div class="a-label">到</div>
           <div class="a-name">小宇的储蓄罐</div>
-          <div class="a-balance">现有 HK$ 2,847</div>
+          <div class="a-balance">现有 <span id="oc-dest-bal">HK$ 3,347</span></div>
         </div>
       </div>
 
@@ -3354,9 +3354,9 @@
     <div class="invest-body">
       <div class="invest-cash-card">
         <div class="label">🪙 可投资的零花钱</div>
-        <div class="value">HK$ 500.00</div>
+        <div class="value" id="invest-cash">HK$ 500.00</div>
         <div class="breakdown">
-          <div class="chip">💰 爸爸刚入金 HK$500</div>
+          <div class="chip">💰 爸爸刚入金 <span id="invest-last-deposit">HK$ 500</span></div>
           <div class="chip">🌟 苹果分红 HK$0</div>
         </div>
       </div>
@@ -3389,16 +3389,16 @@
     <div class="confetti">🎉 ✨ 🎊 ✨ 🎉</div>
     <span class="success-coin">💰</span>
     <h2>入金成功啦!</h2>
-    <div class="amount">+ HK$ 500.00</div>
+    <div class="amount" id="success-amount">+ HK$ 500.00</div>
     <div class="from">来源:<span id="success-source">从牛牛号调拨</span> · 已秒到账</div>
 
     <div class="balance-flip">
       <div class="label">
-        小宇罐子总余额
-        <div class="old">HK$ 2,847</div>
+        小宇总余额
+        <div class="old" id="success-old">HK$ 3,347</div>
       </div>
       <div class="arrow-big">→</div>
-      <div class="new">HK$ 3,347</div>
+      <div class="new" id="success-new">HK$ 3,847</div>
     </div>
 
     <div class="notify-toggle">
@@ -3413,6 +3413,41 @@
 
 
 <script>
+// === central state ===
+let cashBalance = 500;
+
+function getJarTotal() {
+  return Object.values(jarData).reduce((s, j) => s + (j ? j.value : 0), 0);
+}
+function getTotalAssets() { return getJarTotal() + cashBalance; }
+
+function fmtMoney2(n) {
+  return 'HK$ ' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function fmtMoney0(n) {
+  return 'HK$ ' + Math.round(n).toLocaleString('en-US');
+}
+
+function refreshAll() {
+  // header
+  const jt = document.getElementById('header-jar-total');
+  if (jt) jt.textContent = fmtMoney2(getJarTotal());
+  const hc = document.getElementById('header-cash');
+  if (hc) hc.textContent = fmtMoney2(cashBalance);
+  // invest center cash
+  const ic = document.getElementById('invest-cash');
+  if (ic) ic.textContent = fmtMoney2(cashBalance);
+  // transfer/oneclick destination "现有"
+  const tdb = document.getElementById('tr-dest-bal');
+  if (tdb) tdb.textContent = fmtMoney0(getTotalAssets());
+  const odb = document.getElementById('oc-dest-bal');
+  if (odb) odb.textContent = fmtMoney0(getTotalAssets());
+  // goal card
+  if (typeof currentWishKey !== 'undefined' && document.getElementById('goal-saved')) {
+    renderGoalCard();
+  }
+}
+
 // available companies for new jars
 const availableCompanies = [
   { key:'msft',     emoji:'🪟', name:'微软',     tag:'Microsoft · MSFT', reason:'"你玩的电脑游戏几乎都用 Windows"' },
@@ -3459,16 +3494,22 @@ function closeConfirmJar(e) {
   document.getElementById('confirm-jar').classList.remove('show');
 }
 function finalizeNewJar() {
+  if (cashBalance < selectedAmount) {
+    alert('零花钱不够,只剩 ' + fmtMoney2(cashBalance));
+    return;
+  }
+  cashBalance -= selectedAmount;
   document.getElementById('confirm-jar').classList.remove('show');
-  addJarToShelf(selectedCompany);
+  addJarToShelf(selectedCompany, selectedAmount);
+  refreshAll();
   showJarToast(selectedCompany);
 }
-function addJarToShelf(c) {
+function addJarToShelf(c, amount) {
   const grid = document.getElementById('jars-grid');
   const empty = grid.querySelector('.empty-jar');
   jarData[c.key] = {
     emoji: c.emoji, name: c.name + '罐子', sub: '今天刚开的新罐子 ✨',
-    value: 200, cost: 200, div: 0,
+    value: amount, cost: amount, div: 0,
     story: '📖 <strong>关于这家公司:</strong><br>' + c.reason
   };
   const newJar = document.createElement('div');
@@ -3480,7 +3521,7 @@ function addJarToShelf(c) {
     <span class="sparkle">✨</span>
     <span class="emoji">${c.emoji}</span>
     <div class="name">${c.name}</div>
-    <div class="value">HK$ 200</div>
+    <div class="value">HK$ ${amount}</div>
     <div class="chg up">▲ NEW</div>
   `;
   if (empty) grid.insertBefore(newJar, empty);
@@ -3531,6 +3572,7 @@ window.addEventListener('DOMContentLoaded', () => {
   } else {
     document.getElementById('onboard').classList.add('show');
   }
+  refreshAll();
 });
 
 function openCeremony() {
@@ -3548,15 +3590,15 @@ function closeShare(e) {
   document.getElementById('share').classList.remove('show');
 }
 
-const SAVED = 2847;
 const wishes = [
-  { key:'iphone', emoji:'📱', name:'iPhone 17',         target:10000, note:'"我想用它给妈妈拍照片"',     hearts:0, exp:false },
-  { key:'switch', emoji:'🎮', name:'Switch 2',          target:3000,  note:'"和爸爸一起玩马力欧"',       hearts:3, exp:false },
-  { key:'lego',   emoji:'🧱', name:'乐高千年隼',          target:8000,  note:'"星战里最酷的飞船!"',       hearts:0, exp:false },
-  { key:'japan',  emoji:'✈️', name:'和爸爸去日本看樱花',   target:15000, note:'"明年春天可以吗?"',         hearts:0, exp:true  },
-  { key:'bike',   emoji:'🚴', name:'捷安特山地车',         target:5000,  note:'"想骑去学校"',             hearts:0, exp:false },
-  { key:'guitar', emoji:'🎸', name:'小吉他 + 一年课',      target:4500,  note:'"我想学《晴天》给妈妈听"',  hearts:0, exp:true  },
+  { key:'iphone', emoji:'📱', name:'iPhone 17',           target:10000, note:'"我想用它给妈妈拍照片"',     hearts:0, exp:false },
+  { key:'switch', emoji:'🎮', name:'Switch 2',            target:3000,  note:'"和爸爸一起玩马力欧"',       hearts:3, exp:false },
+  { key:'lego',   emoji:'🧱', name:'乐高千年隼',           target:8000,  note:'"星战里最酷的飞船!"',       hearts:0, exp:false },
+  { key:'japan',  emoji:'✈️', name:'和爸爸去日本看樱花',    target:15000, note:'"明年春天可以吗?"',         hearts:0, exp:true  },
+  { key:'bike',   emoji:'🚴', name:'捷安特山地车',          target:5000,  note:'"想骑去学校"',             hearts:0, exp:false },
+  { key:'spacex', emoji:'🚀', name:'去看 SpaceX 火箭发射', target:50000, note:'"我要看真正的火箭飞上天!"', hearts:0, exp:true  },
 ];
+function SAVED() { return getTotalAssets(); }
 const achieved = [
   { emoji:'📚', name:'哈利波特全套', price:'HK$ 1,200 · 2025年12月 完成' },
   { emoji:'⚽', name:'足球 + 球鞋',  price:'HK$ 800 · 2025年9月 完成' },
@@ -3564,17 +3606,19 @@ const achieved = [
 let currentWishKey = 'iphone';
 
 function fmt(n) { return n.toLocaleString('en-US'); }
-function pct(target) { return Math.min(100, Math.round(SAVED / target * 100)); }
+function pct(target) { return Math.min(100, Math.round(SAVED() / target * 100)); }
 
 function renderGoalCard() {
   const w = wishes.find(x => x.key === currentWishKey);
   const p = pct(w.target);
+  const saved = Math.round(SAVED());
   document.getElementById('goal-icon').textContent = w.emoji;
   document.getElementById('goal-name').textContent = '攒一个 ' + w.name;
+  document.getElementById('goal-saved').textContent = 'HK$ ' + fmt(saved);
   document.getElementById('goal-target').textContent = fmt(w.target);
   document.getElementById('goal-percent').textContent = p + '%';
   document.getElementById('goal-bar-fill').style.width = p + '%';
-  const remaining = Math.max(0, w.target - SAVED);
+  const remaining = Math.max(0, w.target - saved);
   document.getElementById('goal-remaining').textContent = 'HK$ ' + fmt(remaining);
 }
 
@@ -3593,7 +3637,7 @@ function renderWishlist() {
         <div class="w-icon">${current.emoji}</div>
         <div class="w-info">
           <div class="w-name">${current.name}${current.exp?' <span class="heart-tag">体验</span>':''}</div>
-          <div class="w-price">HK$ ${fmt(current.target)} · 攒了 ${fmt(SAVED)}</div>
+          <div class="w-price">HK$ ${fmt(current.target)} · 攒了 ${fmt(Math.round(SAVED()))}</div>
           <div class="w-mini-bar"><div class="w-mini-fill" style="width:${cp}%"></div></div>
           <div class="w-note">${current.note}</div>
         </div>
@@ -3732,7 +3776,6 @@ function completeDeposit(source) {
   setTimeout(() => document.getElementById('success').classList.add('show'), 200);
 }
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000];
-const CHILD_CASH = 500;
 let trAmount = 500;
 let ocAmount = 500;
 
@@ -3746,7 +3789,7 @@ function renderTrQuick() {
 function setTrAmount(a) {
   trAmount = a;
   document.getElementById('tr-amt').textContent = fmtNum(a);
-  document.getElementById('tr-after-dest').textContent = 'HK$ ' + fmtNum(CHILD_CASH + a);
+  document.getElementById('tr-after-dest').textContent = 'HK$ ' + fmtNum(cashBalance + a);
   document.getElementById('tr-cta').textContent = '确认调拨 HK$ ' + fmtNum(a);
   renderTrQuick();
 }
@@ -3766,6 +3809,7 @@ function setOcAmount(a) {
 function openTransfer() {
   document.getElementById('deposit').classList.remove('show');
   renderTrQuick();
+  setTrAmount(trAmount);
   setTimeout(() => document.getElementById('transfer').classList.add('show'), 200);
 }
 function closeTransfer(e) {
@@ -3774,8 +3818,8 @@ function closeTransfer(e) {
 }
 function confirmTransfer(source) {
   openPwd('HK$ ' + fmtNum(trAmount), () => {
+    applyDeposit(trAmount, source);
     document.getElementById('transfer').classList.remove('show');
-    document.getElementById('success-source').textContent = source;
     setTimeout(() => document.getElementById('success').classList.add('show'), 250);
   });
 }
@@ -3849,10 +3893,23 @@ function closeOneClick(e) {
 }
 function confirmOneClick() {
   openPwd('HK$ ' + fmtNum(ocAmount), () => {
+    applyDeposit(ocAmount, window.__ocBank || '银行入金');
     document.getElementById('oneclick').classList.remove('show');
-    document.getElementById('success-source').textContent = window.__ocBank || '银行入金';
     setTimeout(() => document.getElementById('success').classList.add('show'), 250);
   });
+}
+
+function applyDeposit(amount, source) {
+  const oldTotal = getTotalAssets();
+  cashBalance += amount;
+  const newTotal = getTotalAssets();
+  document.getElementById('success-source').textContent = source;
+  document.getElementById('success-amount').textContent = '+ ' + fmtMoney2(amount);
+  document.getElementById('success-old').textContent = fmtMoney0(oldTotal);
+  document.getElementById('success-new').textContent = fmtMoney0(newTotal);
+  const li = document.getElementById('invest-last-deposit');
+  if (li) li.textContent = fmtMoney0(amount);
+  refreshAll();
 }
 function closeSuccess(e) {
   if (e && e.target.id !== 'success') return;
@@ -3942,18 +3999,25 @@ function submitTrade() {
     err.textContent = '罐子里只有 ' + fmtMoney(d.value) + ',不够卖';
     return;
   }
+  if (tradeMode === 'buy' && amount > cashBalance) {
+    err.textContent = '零花钱不够,只剩 ' + fmtMoney(cashBalance);
+    return;
+  }
   err.textContent = '';
   const action = tradeMode;
   if (action === 'buy') {
     d.value += amount;
     d.cost += amount;
+    cashBalance -= amount;
   } else {
     d.value -= amount;
     d.cost = Math.max(0, d.cost - amount);
+    cashBalance += amount;
   }
   renderJarModal();
   const shelfJar = document.querySelector(`.jar[data-key="${currentJarKey}"] .value`);
   if (shelfJar) shelfJar.textContent = 'HK$ ' + Math.round(d.value);
+  refreshAll();
   exitTradeMode();
   const t = document.createElement('div');
   t.className = 'jar-toast';
